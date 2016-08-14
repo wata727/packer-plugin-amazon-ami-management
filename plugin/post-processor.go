@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	awscommon "github.com/mitchellh/packer/builder/amazon/common"
 	"github.com/mitchellh/packer/common"
 	"github.com/mitchellh/packer/helper/config"
@@ -26,7 +27,8 @@ type Config struct {
 }
 
 type PostProcessor struct {
-	config Config
+	ec2conn ec2iface.EC2API
+	config  Config
 }
 
 func (p *PostProcessor) Configure(raws ...interface{}) error {
@@ -47,16 +49,19 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 
 func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
 	log.Println("Running Amazon AMI Management post-processor")
-	config, err := p.config.Config()
-	if err != nil {
-		return nil, true, err
+
+	ec2conn := p.ec2conn
+	if ec2conn == nil {
+		// If no ec2conn is set, then we use the real connection
+		config, err := p.config.Config()
+		if err != nil {
+			return nil, true, err
+		}
+		log.Println("Creating AWS session")
+		ec2conn = ec2.New(session.New(config))
 	}
 
-	log.Println("Creating AWS session")
-	session := session.New(config)
-
 	log.Println("Describing images for generation management")
-	ec2conn := ec2.New(session)
 	output, err := ec2conn.DescribeImages(&ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{
 			&ec2.Filter{
