@@ -58,7 +58,8 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			return nil, true, err
 		}
 		log.Println("Creating AWS session")
-		ec2conn = ec2.New(session.New(config))
+		session := session.New(config)
+		ec2conn = ec2.New(session)
 	}
 
 	log.Println("Describing images for generation management")
