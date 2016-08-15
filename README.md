@@ -63,11 +63,14 @@ Required:
 ## Developing Plugin
 
 If you wish to build this plugin on your environment, you can use GNU Make build system.  
-But this Makefile depends on [Go](https://golang.org/) and [gox](https://github.com/mitchellh/gox). At First, you should install each packages.
+But this Makefile depends on [Go](https://golang.org/). At First, you should install Go.
+And we use [godep](https://github.com/tools/godep) for dependency management. Please looks the [reference](https://godoc.org/github.com/tools/godep)
 
 ### Run Test
 ```
 make test
+go get github.com/tools/godep
+godep restore
 go get ./...
 go test ./...
 ?       github.com/wata727/packer-post-processor-amazon-ami-management  [no test files]
@@ -79,6 +82,8 @@ Running unit tests in developing plugin. You can use `awsmock` package.
 ### Installation
 ```
 make install
+go get github.com/tools/godep
+godep restore
 go get ./...
 go test ./...
 ?       github.com/wata727/packer-post-processor-amazon-ami-management  [no test files]
@@ -93,11 +98,15 @@ Run tests, Build and Move to plugin directory.
 ### Release
 ```
 make release
+go get github.com/tools/godep
+godep restore
 go get ./...
 go test ./...
 ?       github.com/wata727/packer-post-processor-amazon-ami-management  [no test files]
 ?       github.com/wata727/packer-post-processor-amazon-ami-management/awsmock  [no test files]
 ok      github.com/wata727/packer-post-processor-amazon-ami-management/plugin   0.020s
+...
+go get github.com/mitchellh/gox
 gox --output 'dist/{{.OS}}_{{.Arch}}/{{.Dir}}'
 ...
 ```

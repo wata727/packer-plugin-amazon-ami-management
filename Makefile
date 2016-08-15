@@ -1,19 +1,22 @@
 default: build
 
 prepare:
+	go get github.com/tools/godep
+	godep restore
 	go get ./...
 
 test: prepare
 	go test ./...
 
 build: test
-	go build ./
+	go build -v
 
 install: build
 	mkdir -p ~/.packer.d/plugins
 	install ./packer-post-processor-amazon-ami-management ~/.packer.d/plugins/
 
 release: test
+	go get github.com/mitchellh/gox
 	gox --output 'dist/{{.OS}}_{{.Arch}}/{{.Dir}}'
 	zip releases/packer-post-processor-amazon-ami-management_darwin_386.zip    dist/darwin_386/packer-post-processor-amazon-ami-management
 	zip releases/packer-post-processor-amazon-ami-management_darwin_amd64.zip  dist/darwin_amd64/packer-post-processor-amazon-ami-management
