@@ -1,4 +1,7 @@
 # packer-post-processor-amazon-ami-management
+[![Build Status](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management.svg?branch=master)](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 Packer post-processor plugin for AMI generation management
 
 ## Description
@@ -63,7 +66,7 @@ Required:
 ## Developing Plugin
 
 If you wish to build this plugin on your environment, you can use GNU Make build system.  
-But this Makefile depends on [Go](https://golang.org/). At First, you should install Go.
+But this Makefile depends on [Go](https://golang.org/). At First, you should install Go.  
 And we use [godep](https://github.com/tools/godep) for dependency management. Please looks the [reference](https://godoc.org/github.com/tools/godep)
 
 ### Run Test
