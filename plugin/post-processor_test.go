@@ -151,3 +151,55 @@ func TestPostProcessor_PostProcess_manyImages(t *testing.T) {
 		t.Fatalf("err: %s", err)
 	}
 }
+
+func TestPostProcessor_PostProcess_ephemeralDevise(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ec2mock := awsmock.NewMockEC2API(ctrl)
+
+	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
+		Filters: []*ec2.Filter{
+			&ec2.Filter{
+				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
+				Values: []*string{
+					aws.String("packer-example"),
+				},
+			},
+		},
+	}).Return(&ec2.DescribeImagesOutput{
+		Images: []*ec2.Image{&ec2.Image{
+			ImageId:      aws.String("ami-12345a"),
+			CreationDate: aws.String("2016-08-20T12:19:56.000Z"),
+			BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+				Ebs: &ec2.EbsBlockDevice{
+					SnapshotId: aws.String("snap-12345a"),
+				},
+			}, &ec2.BlockDeviceMapping{
+				Ebs: nil,
+			}, &ec2.BlockDeviceMapping{
+				Ebs: nil,
+			}},
+		}},
+	}, nil)
+
+	ec2mock.EXPECT().DeregisterImage(&ec2.DeregisterImageInput{
+		ImageId: aws.String("ami-12345a"),
+	}).Return(&ec2.DeregisterImageOutput{}, nil)
+	ec2mock.EXPECT().DeleteSnapshot(&ec2.DeleteSnapshotInput{
+		SnapshotId: aws.String("snap-12345a"),
+	}).Return(&ec2.DeleteSnapshotOutput{}, nil)
+
+	p := PostProcessor{ec2conn: ec2mock}
+	p.config.Identifier = "packer-example"
+	p.config.KeepReleases = 0
+	artifact := &packer.MockArtifact{}
+	_, keep, err := p.PostProcess(testUi(), artifact)
+
+	if !keep {
+		t.Fatal("should keep")
+	}
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
