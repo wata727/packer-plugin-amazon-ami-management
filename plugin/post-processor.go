@@ -107,6 +107,10 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		// Because it retain snapshots. Following operation is deleting snapshots.
 		log.Printf("Deleting snapshot related to AMI (%s)", *image.ImageId)
 		for _, device := range image.BlockDeviceMappings {
+			// skip delete if use ephemeral devise
+			if device.Ebs == nil {
+				continue
+			}
 			log.Printf("Deleting snapshot (%s) related to AMI (%s)", *device.Ebs.SnapshotId, *image.ImageId)
 			if _, err := ec2conn.DeleteSnapshot(&ec2.DeleteSnapshotInput{
 				SnapshotId: device.Ebs.SnapshotId,
