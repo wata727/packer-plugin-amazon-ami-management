@@ -81,9 +81,9 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 	sort(
 		len(output.Images),
 		func(i, j int) bool {
-			i_time, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[i].CreationDate)
-			j_time, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[j].CreationDate)
-			return i_time.After(j_time)
+			iTime, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[i].CreationDate)
+			jTime, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[j].CreationDate)
+			return iTime.After(jTime)
 		},
 		func(i, j int) {
 			output.Images[i], output.Images[j] = output.Images[j], output.Images[i]
