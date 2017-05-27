@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
@@ -22,6 +25,9 @@ type Config struct {
 
 	Identifier   string `mapstructure:"identifier"`
 	KeepReleases int    `mapstructure:"keep_releases"`
+	AccessKey    string `mapstructure:"access_key"`
+	SecretKey    string `mapstructure:"secret_key"`
+	Region       string `mapstructure:"region"`
 
 	ctx interpolate.Context
 }
@@ -53,19 +59,29 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 	ec2conn := p.ec2conn
 	if ec2conn == nil {
 		// If no ec2conn is set, then we use the real connection
-		config, err := p.config.Config()
-		if err != nil {
-			return nil, true, err
-		}
+		config := aws.NewConfig().WithRegion(p.config.Region).WithMaxRetries(11)
+		sess := session.New(config)
+		creds := credentials.NewChainCredentials([]credentials.Provider{
+			&credentials.StaticProvider{Value: credentials.Value{
+				AccessKeyID:     p.config.AccessKey,
+				SecretAccessKey: p.config.SecretKey,
+			}},
+			&credentials.EnvProvider{},
+			&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
+			&ec2rolecreds.EC2RoleProvider{
+				Client: ec2metadata.New(sess),
+			},
+		})
+
 		log.Println("Creating AWS session")
-		session := session.New(config)
-		ec2conn = ec2.New(session)
+		ec2Session := session.New(config.WithCredentials(creds))
+		ec2conn = ec2.New(ec2Session)
 	}
 
 	log.Println("Describing images for generation management")
 	output, err := ec2conn.DescribeImages(&ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{
-			&ec2.Filter{
+			{
 				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
 				Values: []*string{
 					aws.String(p.config.Identifier),
