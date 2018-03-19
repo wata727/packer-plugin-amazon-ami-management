@@ -1,9 +1,8 @@
 default: build
 
 prepare:
-	go get github.com/tools/godep
-	godep restore
-	go get ./...
+	go get -u github.com/golang/dep/cmd/dep
+	dep ensure
 
 test: prepare
 	go test ./...
