@@ -20,6 +20,8 @@ import (
 	"github.com/hashicorp/packer/template/interpolate"
 )
 
+// Config is a post-processor's configuration
+// PostProcessor generates it using Packer's configuration in `Configure()` method
 type Config struct {
 	common.PackerConfig    `mapstructure:",squash"`
 	awscommon.AccessConfig `mapstructure:",squash"`
@@ -33,11 +35,14 @@ type Config struct {
 	ctx interpolate.Context
 }
 
+// PostProcessor is the core of this library
+// Packer performs `PostProcess()` method of this processor
 type PostProcessor struct {
 	ec2conn ec2iface.EC2API
 	config  Config
 }
 
+// Configure generates post-processor's configuration
 func (p *PostProcessor) Configure(raws ...interface{}) error {
 	p.config.ctx.Funcs = awscommon.TemplateFuncs
 	err := config.Decode(&p.config, &config.DecodeOpts{
@@ -54,6 +59,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	return nil
 }
 
+// PostProcess deletes old AMI and snapshot so as to maintain the number of generation expected
 func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
 	log.Println("Running the post-processor")
 
@@ -114,8 +120,8 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			return nil, true, err
 		}
 
-		// DeregisterImage method only perform to AMI
-		// Because it retain snapshots. Following operation is deleting snapshots.
+		// DeregisterImage method only performs to AMI
+		// Because it retains snapshot. Following operation is deleting snapshots.
 		log.Printf("Deleting snapshot related to AMI (%s)", *image.ImageId)
 		for _, device := range image.BlockDeviceMappings {
 			// skip delete if use ephemeral devise

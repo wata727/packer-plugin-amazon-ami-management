@@ -12,7 +12,7 @@ import (
 
 //go:generate mockgen -source vendor/github.com/aws/aws-sdk-go/service/ec2/ec2iface/interface.go -destination mock.go -package main
 
-func testUi() *packer.BasicUi {
+func testUI() *packer.BasicUi {
 	return &packer.BasicUi{
 		Reader: new(bytes.Buffer),
 		Writer: new(bytes.Buffer),
@@ -44,7 +44,7 @@ func TestPostProcessor_PostProcess_emptyImages(t *testing.T) {
 	p := PostProcessor{ec2conn: ec2mock}
 	p.config.Identifier = "packer-example"
 	artifact := &packer.MockArtifact{}
-	_, keep, err := p.PostProcess(testUi(), artifact)
+	_, keep, err := p.PostProcess(testUI(), artifact)
 
 	if !keep {
 		t.Fatal("should keep")
@@ -81,7 +81,7 @@ func TestPostProcessor_PostProcess_fewImages(t *testing.T) {
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 3
 	artifact := &packer.MockArtifact{}
-	_, keep, err := p.PostProcess(testUi(), artifact)
+	_, keep, err := p.PostProcess(testUI(), artifact)
 
 	if !keep {
 		t.Fatal("should keep")
@@ -142,7 +142,7 @@ func TestPostProcessor_PostProcess_manyImages(t *testing.T) {
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 2
 	artifact := &packer.MockArtifact{}
-	_, keep, err := p.PostProcess(testUi(), artifact)
+	_, keep, err := p.PostProcess(testUI(), artifact)
 
 	if !keep {
 		t.Fatal("should keep")
@@ -194,7 +194,7 @@ func TestPostProcessor_PostProcess_ephemeralDevise(t *testing.T) {
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 0
 	artifact := &packer.MockArtifact{}
-	_, keep, err := p.PostProcess(testUi(), artifact)
+	_, keep, err := p.PostProcess(testUI(), artifact)
 
 	if !keep {
 		t.Fatal("should keep")
