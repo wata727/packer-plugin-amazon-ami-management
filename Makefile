@@ -15,7 +15,8 @@ install: build
 	install ./packer-post-processor-amazon-ami-management ~/.packer.d/plugins/
 
 release: test
-	go get github.com/mitchellh/gox
+	go get -u github.com/mitchellh/gox
+	mkdir -p dist releases
 	gox --output 'dist/{{.OS}}_{{.Arch}}/{{.Dir}}'
 	zip -j releases/packer-post-processor-amazon-ami-management_darwin_386.zip    dist/darwin_386/packer-post-processor-amazon-ami-management
 	zip -j releases/packer-post-processor-amazon-ami-management_darwin_amd64.zip  dist/darwin_amd64/packer-post-processor-amazon-ami-management
@@ -35,7 +36,7 @@ release: test
 
 clean:
 	rm -rf dist/
-	rm -f releases/*.zip
+	rm -rf releases/
 
 mock:
 	go get -u github.com/golang/mock/mockgen
