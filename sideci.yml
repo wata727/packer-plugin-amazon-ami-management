@@ -1,5 +1,0 @@
-linter:
-  gometalinter:
-    options:
-      skip: 'awsmock/ec2mock.go'
-      vendor: true
