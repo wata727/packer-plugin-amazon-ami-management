@@ -59,7 +59,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	return nil
 }
 
-// PostProcess deletes old AMI and snapshot so as to maintain the number of generation expected
+// PostProcess deletes old AMI and snapshot so as to maintain the number of AMIs expected
 func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
 	log.Println("Running the post-processor")
 
