@@ -1,9 +1,6 @@
 package main
 
-import (
-	"github.com/mitchellh/packer/packer/plugin"
-	"github.com/wata727/packer-post-processor-amazon-ami-management/plugin"
-)
+import "github.com/hashicorp/packer/packer/plugin"
 
 func main() {
 	server, err := plugin.Server()
@@ -11,6 +8,6 @@ func main() {
 		panic(err)
 	}
 
-	server.RegisterPostProcessor(new(amazonamimanagement.PostProcessor))
+	server.RegisterPostProcessor(new(PostProcessor))
 	server.Serve()
 }

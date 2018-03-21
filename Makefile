@@ -1,9 +1,8 @@
 default: build
 
 prepare:
-	go get github.com/tools/godep
-	godep restore
-	go get ./...
+	go get -u github.com/golang/dep/cmd/dep
+	dep ensure
 
 test: prepare
 	go test ./...
@@ -37,5 +36,9 @@ release: test
 clean:
 	rm -rf dist/
 	rm -f releases/*.zip
+
+mock:
+	go get -u github.com/golang/mock/mockgen
+	go generate ./...
 
 .PHONY: default prepare test build install release clean
