@@ -42,7 +42,8 @@ The following example `template.json`:
     "type": "amazon-ami-management",
     "region": "us-east-1",
     "identifier": "packer-example",
-    "keep_releases": "3"
+    "keep_releases": "3",
+    "ami_regions": ["ap-northeast-1"]
   }]
 }
 ```
@@ -52,8 +53,8 @@ The following example `template.json`:
 Type: `amazon-ami-management`
 
 Required:
-  - `identifier` (string) 
-    - The Identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
+  - `identifier` (string)
+    - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
   - `keep_releases` (interger)
     - The number of AMIs.
   - `access_key` (string)
@@ -62,6 +63,10 @@ Required:
     - The secret key used in AWS. If you can use environment values or [shared credentials](https://blogs.aws.amazon.com/security/post/Tx3D6U6WSFGOK2H/A-New-and-Standardized-Way-to-Manage-Credentials-in-the-AWS-SDKs), not required this parameter.
   - `region` (string)
     - The name of the region, such as `us-east-1` in which to manage AMIs. If you can use environment values, not required this parameter.
+
+Optional:
+  - `ami_regions` (array of strings)
+    - A list of regions where copied AMI is located. It is useful when specifying `ami_regions` in builder config.
 
 ## Developing Plugin
 
