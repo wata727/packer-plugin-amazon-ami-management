@@ -71,6 +71,11 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 	}
 
 	for _, region := range p.config.AMIRegions {
+		if region == p.config.Region {
+			ui.Message(fmt.Sprintf("Avoiding processing in duplicate region: %s", region))
+			continue
+		}
+
 		ui.Message(fmt.Sprintf("Processing in %s", region))
 		p.makeConnection(region)
 		if err := p.manageAMIs(ui); err != nil {
