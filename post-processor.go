@@ -26,11 +26,12 @@ type Config struct {
 	common.PackerConfig    `mapstructure:",squash"`
 	awscommon.AccessConfig `mapstructure:",squash"`
 
-	Identifier   string `mapstructure:"identifier"`
-	KeepReleases int    `mapstructure:"keep_releases"`
-	AccessKey    string `mapstructure:"access_key"`
-	SecretKey    string `mapstructure:"secret_key"`
-	Region       string `mapstructure:"region"`
+	Identifier   string   `mapstructure:"identifier"`
+	KeepReleases int      `mapstructure:"keep_releases"`
+	AccessKey    string   `mapstructure:"access_key"`
+	SecretKey    string   `mapstructure:"secret_key"`
+	Region       string   `mapstructure:"region"`
+	AMIRegions   []string `mapstructure:"ami_regions"`
 
 	ctx interpolate.Context
 }
@@ -56,6 +57,8 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		return err
 	}
 
+	p.makeConnection(p.config.Region)
+
 	return nil
 }
 
@@ -63,30 +66,47 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
 	log.Println("Running the post-processor")
 
-	ec2conn := p.ec2conn
-	if ec2conn == nil {
-		// If processor doesn't set connection, make the real connection
-		config := aws.NewConfig().WithRegion(p.config.Region).WithMaxRetries(11)
-		sess := session.New(config)
-		creds := credentials.NewChainCredentials([]credentials.Provider{
-			&credentials.StaticProvider{Value: credentials.Value{
-				AccessKeyID:     p.config.AccessKey,
-				SecretAccessKey: p.config.SecretKey,
-			}},
-			&credentials.EnvProvider{},
-			&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
-			&ec2rolecreds.EC2RoleProvider{
-				Client: ec2metadata.New(sess),
-			},
-		})
-
-		log.Println("Creating a session")
-		ec2Session := session.New(config.WithCredentials(creds))
-		ec2conn = ec2.New(ec2Session)
+	if err := p.manageAMIs(ui); err != nil {
+		return nil, true, err
 	}
 
+	for _, region := range p.config.AMIRegions {
+		if region == p.config.Region {
+			ui.Message(fmt.Sprintf("Avoiding processing in duplicate region: %s", region))
+			continue
+		}
+
+		ui.Message(fmt.Sprintf("Processing in %s", region))
+		p.makeConnection(region)
+		if err := p.manageAMIs(ui); err != nil {
+			return nil, true, err
+		}
+	}
+
+	return artifact, true, nil
+}
+
+func (p *PostProcessor) makeConnection(region string) {
+	config := aws.NewConfig().WithRegion(region).WithMaxRetries(11)
+	sess := session.New(config)
+	creds := credentials.NewChainCredentials([]credentials.Provider{
+		&credentials.StaticProvider{Value: credentials.Value{
+			AccessKeyID:     p.config.AccessKey,
+			SecretAccessKey: p.config.SecretKey,
+		}},
+		&credentials.EnvProvider{},
+		&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
+		&ec2rolecreds.EC2RoleProvider{
+			Client: ec2metadata.New(sess),
+		},
+	})
+
+	p.ec2conn = ec2.New(session.New(config.WithCredentials(creds)))
+}
+
+func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
 	log.Println("Describing images")
-	output, err := ec2conn.DescribeImages(&ec2.DescribeImagesInput{
+	output, err := p.ec2conn.DescribeImages(&ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{
 			{
 				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
@@ -97,7 +117,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		},
 	})
 	if err != nil {
-		return nil, true, err
+		return err
 	}
 
 	// Sort in descending order by creation date
@@ -114,10 +134,10 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		}
 		ui.Message(fmt.Sprintf("Deleting image: %s", *image.ImageId))
 		log.Printf("Deleting AMI (%s)", *image.ImageId)
-		if _, err := ec2conn.DeregisterImage(&ec2.DeregisterImageInput{
+		if _, err := p.ec2conn.DeregisterImage(&ec2.DeregisterImageInput{
 			ImageId: image.ImageId,
 		}); err != nil {
-			return nil, true, err
+			return err
 		}
 
 		// DeregisterImage method only performs to AMI
@@ -129,13 +149,13 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 				continue
 			}
 			log.Printf("Deleting snapshot (%s) related to AMI (%s)", *device.Ebs.SnapshotId, *image.ImageId)
-			if _, err := ec2conn.DeleteSnapshot(&ec2.DeleteSnapshotInput{
+			if _, err := p.ec2conn.DeleteSnapshot(&ec2.DeleteSnapshotInput{
 				SnapshotId: device.Ebs.SnapshotId,
 			}); err != nil {
-				return nil, true, err
+				return err
 			}
 		}
 	}
 
-	return artifact, true, nil
+	return nil
 }
