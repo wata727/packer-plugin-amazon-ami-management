@@ -7,10 +7,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
@@ -28,10 +24,7 @@ type Config struct {
 
 	Identifier   string   `mapstructure:"identifier"`
 	KeepReleases int      `mapstructure:"keep_releases"`
-	AccessKey    string   `mapstructure:"access_key"`
-	SecretKey    string   `mapstructure:"secret_key"`
-	Region       string   `mapstructure:"region"`
-	AMIRegions   []string `mapstructure:"ami_regions"`
+	Regions      []string `mapstructure:"regions"`
 
 	ctx interpolate.Context
 }
@@ -39,8 +32,9 @@ type Config struct {
 // PostProcessor is the core of this library
 // Packer performs `PostProcess()` method of this processor
 type PostProcessor struct {
-	ec2conn ec2iface.EC2API
-	config  Config
+	testMode bool
+	ec2conn  ec2iface.EC2API
+	config   Config
 }
 
 // Configure generates post-processor's configuration
@@ -57,8 +51,6 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		return err
 	}
 
-	p.makeConnection(p.config.Region)
-
 	return nil
 }
 
@@ -66,42 +58,23 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
 	log.Println("Running the post-processor")
 
-	if err := p.manageAMIs(ui); err != nil {
-		return nil, true, err
-	}
+	for _, region := range p.config.Regions {
+		ui.Message(fmt.Sprintf("Processing in %s", region))
 
-	for _, region := range p.config.AMIRegions {
-		if region == p.config.Region {
-			ui.Message(fmt.Sprintf("Avoiding processing in duplicate region: %s", region))
-			continue
+		if !p.testMode {
+			sess, err := p.config.AccessConfig.Session()
+			if err != nil {
+				return nil, true, err
+			}
+			p.ec2conn = ec2.New(sess.Copy(&aws.Config{Region: aws.String(region)}))
 		}
 
-		ui.Message(fmt.Sprintf("Processing in %s", region))
-		p.makeConnection(region)
 		if err := p.manageAMIs(ui); err != nil {
 			return nil, true, err
 		}
 	}
 
 	return artifact, true, nil
-}
-
-func (p *PostProcessor) makeConnection(region string) {
-	config := aws.NewConfig().WithRegion(region).WithMaxRetries(11)
-	sess := session.New(config)
-	creds := credentials.NewChainCredentials([]credentials.Provider{
-		&credentials.StaticProvider{Value: credentials.Value{
-			AccessKeyID:     p.config.AccessKey,
-			SecretAccessKey: p.config.SecretKey,
-		}},
-		&credentials.EnvProvider{},
-		&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
-		&ec2rolecreds.EC2RoleProvider{
-			Client: ec2metadata.New(sess),
-		},
-	})
-
-	p.ec2conn = ec2.New(session.New(config.WithCredentials(creds)))
 }
 
 func (p *PostProcessor) manageAMIs(ui packer.Ui) error {

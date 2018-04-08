@@ -6,7 +6,7 @@
 Packer post-processor plugin for AMI management
 
 ## Description
-This post-processor assists your AMI management. It deletes old AMI and EBS snapshot after bake new AMI.
+This post-processor assists your AMI management. It deletes old AMI and EBS snapshot using `amazon-ebs` builder's access configuration after bake new AMI.
 
 ## Installation
 Packer supports plugin system. Please read the following documentation:
@@ -40,10 +40,9 @@ The following example `template.json`:
   }],
   "post-processors":[{
     "type": "amazon-ami-management",
-    "region": "us-east-1",
+    "regions": ["us-east-1"],
     "identifier": "packer-example",
-    "keep_releases": "3",
-    "ami_regions": ["ap-northeast-1"]
+    "keep_releases": "3"
   }]
 }
 ```
@@ -57,16 +56,8 @@ Required:
     - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
   - `keep_releases` (interger)
     - The number of AMIs.
-  - `access_key` (string)
-    - The access key used in AWS. If you can use environment values or [shared credentials](https://blogs.aws.amazon.com/security/post/Tx3D6U6WSFGOK2H/A-New-and-Standardized-Way-to-Manage-Credentials-in-the-AWS-SDKs), not required this parameter.
-  - `secret_key` (string)
-    - The secret key used in AWS. If you can use environment values or [shared credentials](https://blogs.aws.amazon.com/security/post/Tx3D6U6WSFGOK2H/A-New-and-Standardized-Way-to-Manage-Credentials-in-the-AWS-SDKs), not required this parameter.
-  - `region` (string)
-    - The name of the region, such as `us-east-1` in which to manage AMIs. If you can use environment values, not required this parameter.
-
-Optional:
-  - `ami_regions` (array of strings)
-    - A list of regions where copied AMI is located. It is useful when specifying `ami_regions` in builder config.
+  - `regions` (array of strings)
+    - A list of regions, such as `us-east-1` in which to manage AMIs.
 
 ## Developing Plugin
 
