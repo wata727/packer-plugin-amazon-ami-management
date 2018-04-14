@@ -41,8 +41,12 @@ func TestPostProcessor_PostProcess_emptyImages(t *testing.T) {
 		Images: []*ec2.Image{},
 	}, nil)
 
-	p := PostProcessor{ec2conn: ec2mock}
+	p := PostProcessor{
+		testMode: true,
+		ec2conn:  ec2mock,
+	}
 	p.config.Identifier = "packer-example"
+	p.config.Regions = []string{"us-east-1"}
 	artifact := &packer.MockArtifact{}
 	_, keep, err := p.PostProcess(testUI(), artifact)
 
@@ -77,9 +81,13 @@ func TestPostProcessor_PostProcess_fewImages(t *testing.T) {
 		}},
 	}, nil)
 
-	p := PostProcessor{ec2conn: ec2mock}
+	p := PostProcessor{
+		testMode: true,
+		ec2conn:  ec2mock,
+	}
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 3
+	p.config.Regions = []string{"us-east-1"}
 	artifact := &packer.MockArtifact{}
 	_, keep, err := p.PostProcess(testUI(), artifact)
 
@@ -138,9 +146,13 @@ func TestPostProcessor_PostProcess_manyImages(t *testing.T) {
 		SnapshotId: aws.String("snap-12345b"),
 	}).Return(&ec2.DeleteSnapshotOutput{}, nil)
 
-	p := PostProcessor{ec2conn: ec2mock}
+	p := PostProcessor{
+		testMode: true,
+		ec2conn:  ec2mock,
+	}
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 2
+	p.config.Regions = []string{"us-east-1"}
 	artifact := &packer.MockArtifact{}
 	_, keep, err := p.PostProcess(testUI(), artifact)
 
@@ -190,9 +202,13 @@ func TestPostProcessor_PostProcess_ephemeralDevise(t *testing.T) {
 		SnapshotId: aws.String("snap-12345a"),
 	}).Return(&ec2.DeleteSnapshotOutput{}, nil)
 
-	p := PostProcessor{ec2conn: ec2mock}
+	p := PostProcessor{
+		testMode: true,
+		ec2conn:  ec2mock,
+	}
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 0
+	p.config.Regions = []string{"us-east-1"}
 	artifact := &packer.MockArtifact{}
 	_, keep, err := p.PostProcess(testUI(), artifact)
 
