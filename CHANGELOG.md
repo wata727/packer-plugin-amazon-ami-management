@@ -1,3 +1,9 @@
+## v0.4.0 (2018-04-14)
+
+### Changes
+
+- Inherit from Packer access config ([#18](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/18))
+
 ## v0.3.0 (2018-03-29)
 
 ### Enhancements
