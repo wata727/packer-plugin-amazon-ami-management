@@ -58,6 +58,7 @@ Required:
     - The number of AMIs.
   - `regions` (array of strings)
     - A list of regions, such as `us-east-1` in which to manage AMIs.
+    - **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
 
 ## Developing Plugin
 
