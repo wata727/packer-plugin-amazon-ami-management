@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -49,6 +50,16 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	}, raws...)
 	if err != nil {
 		return err
+	}
+
+	if p.config.Identifier == "" {
+		return errors.New("empty `identifier` is not allowed. Please make sure that it is set correctly")
+	}
+	if p.config.KeepReleases < 1 {
+		return errors.New("`keep_releases` must be greater than 1. Please make sure that it is set correctly")
+	}
+	if len(p.config.Regions) == 0 {
+		return errors.New("empty `regions` is not allowed. Please make sure that it is set correctly")
 	}
 
 	return nil

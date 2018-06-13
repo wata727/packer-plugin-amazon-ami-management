@@ -23,6 +23,67 @@ func TestPostProcessor_ImplementsPostProcessor(t *testing.T) {
 	var _ packer.PostProcessor = new(PostProcessor)
 }
 
+func TestPostProcessor_Configure_validConfig(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":       []string{"us-east-1"},
+		"identifier":    "packer-example",
+		"keep_releases": 3,
+	})
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_missingRegions(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"region":        "us-east-1",
+		"identifier":    "packer-example",
+		"keep_releases": 3,
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "empty `regions` is not allowed. Please make sure that it is set correctly" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_emptyIdentifier(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":       []string{"us-east-1"},
+		"identifier":    "",
+		"keep_releases": 3,
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "empty `identifier` is not allowed. Please make sure that it is set correctly" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_invalidKeepReleases(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":       []string{"us-east-1"},
+		"identifier":    "packer-example",
+		"keep_releases": -1,
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "`keep_releases` must be greater than 1. Please make sure that it is set correctly" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
 func TestPostProcessor_PostProcess_emptyImages(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
