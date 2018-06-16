@@ -1,3 +1,14 @@
+## v0.5.0 (2018-06-16)
+
+### Changes
+
+- Validate post-processor's configuration ([#22](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/22))
+
+### Others
+
+- Add note about `region` parameter ([#20](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/20))
+- CI against Go 1.10 ([#21](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/21))
+
 ## v0.4.0 (2018-04-14)
 
 ### Changes
