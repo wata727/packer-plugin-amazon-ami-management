@@ -54,7 +54,7 @@ Type: `amazon-ami-management`
 Required:
   - `identifier` (string)
     - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
-  - `keep_releases` (interger)
+  - `keep_releases` (integer)
     - The number of AMIs.
   - `regions` (array of strings)
     - A list of regions, such as `us-east-1` in which to manage AMIs.
