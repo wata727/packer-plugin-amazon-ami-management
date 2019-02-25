@@ -52,13 +52,12 @@ The following example `template.json`:
 Type: `amazon-ami-management`
 
 Required:
-  - `identifier` (string)
-    - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
-  - `keep_releases` (integer)
-    - The number of AMIs.
-  - `regions` (array of strings)
-    - A list of regions, such as `us-east-1` in which to manage AMIs.
-    - **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
+  - `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
+  - `keep_releases` (integer) - The number of AMIs.
+  - `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
+
+Optional:
+  - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
 ## Developing Plugin
 
