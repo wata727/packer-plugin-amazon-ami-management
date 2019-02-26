@@ -1,10 +1,6 @@
 default: build
 
-prepare:
-	go get -u github.com/golang/dep/cmd/dep
-	dep ensure
-
-test: prepare
+test:
 	go test ./...
 
 build: test
@@ -17,7 +13,7 @@ install: build
 release: test
 	go get -u github.com/mitchellh/gox
 	mkdir -p dist releases
-	gox --output 'dist/{{.OS}}_{{.Arch}}/{{.Dir}}'
+	gox --output 'dist/{{.OS}}_{{.Arch}}/{{.Dir}}' -ldflags="-w -s"
 	zip -j releases/packer-post-processor-amazon-ami-management_darwin_386.zip    dist/darwin_386/packer-post-processor-amazon-ami-management
 	zip -j releases/packer-post-processor-amazon-ami-management_darwin_amd64.zip  dist/darwin_amd64/packer-post-processor-amazon-ami-management
 	zip -j releases/packer-post-processor-amazon-ami-management_freebsd_386.zip   dist/freebsd_386/packer-post-processor-amazon-ami-management
@@ -42,4 +38,4 @@ mock:
 	go get -u github.com/golang/mock/mockgen
 	go generate ./...
 
-.PHONY: default prepare test build install release clean
+.PHONY: default test build install release clean
