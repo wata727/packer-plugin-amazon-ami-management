@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
@@ -26,6 +27,7 @@ type Config struct {
 	Identifier   string   `mapstructure:"identifier"`
 	KeepReleases int      `mapstructure:"keep_releases"`
 	Regions      []string `mapstructure:"regions"`
+	DryRun       bool     `mapstructure:"dry_run"`
 
 	ctx interpolate.Context
 }
@@ -70,7 +72,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 	log.Println("Running the post-processor")
 
 	for _, region := range p.config.Regions {
-		ui.Message(fmt.Sprintf("Processing in %s", region))
+		ui.Message(p.uiMessage(fmt.Sprintf("Processing in %s", region)))
 
 		if !p.testMode {
 			sess, err := p.config.AccessConfig.Session()
@@ -116,12 +118,17 @@ func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
 		if i < p.config.KeepReleases {
 			continue
 		}
-		ui.Message(fmt.Sprintf("Deleting image: %s", *image.ImageId))
+		ui.Message(p.uiMessage(fmt.Sprintf("Deleting image: %s", *image.ImageId)))
 		log.Printf("Deleting AMI (%s)", *image.ImageId)
 		if _, err := p.ec2conn.DeregisterImage(&ec2.DeregisterImageInput{
 			ImageId: image.ImageId,
+			DryRun:  aws.Bool(p.config.DryRun),
 		}); err != nil {
-			return err
+			if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "DryRunOperation" {
+				// noop
+			} else {
+				return err
+			}
 		}
 
 		// DeregisterImage method only performs to AMI
@@ -135,11 +142,23 @@ func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
 			log.Printf("Deleting snapshot (%s) related to AMI (%s)", *device.Ebs.SnapshotId, *image.ImageId)
 			if _, err := p.ec2conn.DeleteSnapshot(&ec2.DeleteSnapshotInput{
 				SnapshotId: device.Ebs.SnapshotId,
+				DryRun:     aws.Bool(p.config.DryRun),
 			}); err != nil {
-				return err
+				if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "DryRunOperation" {
+					// noop
+				} else {
+					return err
+				}
 			}
 		}
 	}
 
 	return nil
+}
+
+func (p *PostProcessor) uiMessage(message string) string {
+	if p.config.DryRun {
+		return "[DryRun] " + message
+	}
+	return message
 }

@@ -3,11 +3,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:d3cef990a0a58ee3bb6e08125c8ce8560c6ea81163e00b536474b90713253990"
   name = "github.com/Azure/go-ntlmssp"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c92175d540060095c69ced311f76aea56c83ecdb"
 
 [[projects]]
+  digest = "1:3f05b2028e83bf1d97d9ab2874bfc9f12f91a2946019499f830db16a02eb2385"
   name = "github.com/ChrisTrenkamp/goxpath"
   packages = [
     ".",
@@ -23,12 +26,14 @@
     "tree/xmltree",
     "tree/xmltree/xmlbuilder",
     "tree/xmltree/xmlele",
-    "tree/xmltree/xmlnode"
+    "tree/xmltree/xmlnode",
   ]
+  pruneopts = "UT"
   revision = "2ad3b31cf4a21db70fc0cacd0e0120eaae566f98"
   version = "v1.0-alpha3"
 
 [[projects]]
+  digest = "1:88ffd512e2c8e9da61a335dff6490f3534cf98dfe95e1d4ede0bd4517d95dad9"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -58,63 +63,83 @@
     "private/protocol/xml/xmlutil",
     "service/ec2",
     "service/ec2/ec2iface",
-    "service/sts"
+    "service/sts",
   ]
+  pruneopts = "UT"
   revision = "f0872da8a448f8cb10f4f0c95c2100e4f7356448"
   version = "v1.13.16"
 
 [[projects]]
+  digest = "1:12d4bc32014d9755850a247c43981d4b616f99c94f86247df2d6187511bfad8b"
   name = "github.com/dylanmei/iso8601"
   packages = ["."]
+  pruneopts = "UT"
   revision = "2075bf119b58e5576c6ed9f867b8f3d17f2e54d4"
   version = "v0.1.0"
 
 [[projects]]
+  digest = "1:db18b69d50d54aadb436b8639e2b55b5ece5f595a601d9eb461fabd998ebb288"
   name = "github.com/go-ini/ini"
   packages = ["."]
+  pruneopts = "UT"
   revision = "6333e38ac20b8949a8dd68baa3650f4dee8f39f0"
   version = "v1.33.0"
 
 [[projects]]
+  digest = "1:a62049a8fa554d688c8db4845c65ddcd5986b75f3a851e4fb563c6893d292e38"
   name = "github.com/golang/mock"
   packages = ["gomock"]
+  pruneopts = "UT"
   revision = "13f360950a79f5864a972c786a10a50e44b69541"
   version = "v1.0.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:07671f8997086ed115824d1974507d2b147d1e0463675ea5dbf3be89b1c2c563"
   name = "github.com/hashicorp/errwrap"
   packages = ["."]
+  pruneopts = "UT"
   revision = "7554cd9344cec97297fa6649b055a8c98c2a1e55"
 
 [[projects]]
   branch = "master"
+  digest = "1:075de3352ee3366e02ab1547a3a6d9149d9fc85419212deb126baee9976a4dc5"
   name = "github.com/hashicorp/go-checkpoint"
   packages = ["."]
+  pruneopts = "UT"
   revision = "1545e56e46dec3bba264e41fde2c1e2aa65b5dd4"
 
 [[projects]]
+  digest = "1:e8659d67e5150af1535fbdad49803038bb40070458c2900223f498e110ce0116"
   name = "github.com/hashicorp/go-cleanhttp"
   packages = ["."]
+  pruneopts = "UT"
   revision = "875fb671b3ddc66f8e2f0acc33829c8cb989a38d"
 
 [[projects]]
+  digest = "1:9e6e28e4a4a21fc0e3448a519ac1b1979d03c9cb15ceeee0004e5912cf37f763"
   name = "github.com/hashicorp/go-multierror"
   packages = ["."]
+  pruneopts = "UT"
   revision = "d30f09973e19c1dfcd120b2d9c4f168e68d6b5d5"
 
 [[projects]]
   branch = "master"
+  digest = "1:354978aad16c56c27f57e5b152224806d87902e4935da3b03e18263d82ae77aa"
   name = "github.com/hashicorp/go-uuid"
   packages = ["."]
+  pruneopts = "UT"
   revision = "27454136f0364f2d44b1276c552d69105cf8c498"
 
 [[projects]]
+  digest = "1:9887e6fdbae278dd947e7eccc1cbdf364fcd8ad1ccf80900ee989b20c6c8ce59"
   name = "github.com/hashicorp/go-version"
   packages = ["."]
+  pruneopts = "UT"
   revision = "7e3c02b30806fa5779d3bdfc152ce4c6f40e7b38"
 
 [[projects]]
+  digest = "1:97845ae30fb764abbe357f8bf2cf6dcafb5722bddcf719db67f8cef6b1890a1e"
   name = "github.com/hashicorp/packer"
   packages = [
     "builder/amazon/common",
@@ -132,99 +157,129 @@
     "packer/rpc",
     "template",
     "template/interpolate",
-    "version"
+    "version",
   ]
+  pruneopts = "UT"
   revision = "0b740f508f4f9b63442879a8c8f7a197b9a83dc1"
   version = "v1.2.1"
 
 [[projects]]
+  digest = "1:7287a9f1e1c95344015d7b51b470dfc713c1e066dcb2737ba22598dee2fb1a03"
   name = "github.com/hashicorp/yamux"
   packages = ["."]
+  pruneopts = "UT"
   revision = "df949784da9ed028ee76df44652e42d37a09d7e4"
 
 [[projects]]
+  digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
+  pruneopts = "UT"
   revision = "0b12d6b5"
 
 [[projects]]
   branch = "master"
+  digest = "1:81780a09277ee80f2bfbb90da6f51b5de95423db6cde8ff6d72cd20eba989bba"
   name = "github.com/kr/fs"
   packages = ["."]
+  pruneopts = "UT"
   revision = "2788f0dbd16903de03cb8186e5c7d97b69ad387b"
 
 [[projects]]
+  digest = "1:2773a3d38a10f76a8ac624d50b8d6d42ab3e50224841e3c225b4aee2dc4921ba"
   name = "github.com/masterzen/azure-sdk-for-go"
   packages = [
     "core/http",
-    "core/tls"
+    "core/tls",
   ]
+  pruneopts = "UT"
   revision = "ee4f0065d00cd12b542f18f5bc45799e88163b12"
 
 [[projects]]
   branch = "master"
+  digest = "1:a7c1ab68a6cdeffcb148dc0d8b92c897f034aa38f58b69eab9bc6e77645b26fb"
   name = "github.com/masterzen/simplexml"
   packages = ["dom"]
+  pruneopts = "UT"
   revision = "4572e39b1ab9fe03ee513ce6fc7e289e98482190"
 
 [[projects]]
   branch = "master"
+  digest = "1:21990ab65086d054855aea2761ff39033a4dc083e4c4b6cb4ba1601fbf3fe91a"
   name = "github.com/masterzen/winrm"
   packages = [
     ".",
-    "soap"
+    "soap",
   ]
+  pruneopts = "UT"
   revision = "7e40f93ae939004a1ef3bd5ff5c88c756ee762bb"
 
 [[projects]]
   branch = "master"
+  digest = "1:785ae2eb739e859a7294c224a87958941126459d08a4e4d36d017c59cde8b851"
   name = "github.com/mitchellh/go-fs"
   packages = [
     ".",
-    "fat"
+    "fat",
   ]
+  pruneopts = "UT"
   revision = "7bae45d9a684750e82b97ff320c82556614e621b"
 
 [[projects]]
   branch = "master"
+  digest = "1:041bb70411ef6945901c63cab3bfd6a1a1de88352359ad0e6e1e86478a53d0ec"
   name = "github.com/mitchellh/iochan"
   packages = ["."]
+  pruneopts = "UT"
   revision = "87b45ffd0e9581375c491fef3d32130bb15c5bd7"
 
 [[projects]]
+  digest = "1:8abbe3953d396fad8a4106b77e0fc89c6ee6d308a78f739be31a20fb8c9b4ed0"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
+  pruneopts = "UT"
   revision = "b4575eea38cca1123ec2dc90c26529b5c5acfcff"
 
 [[projects]]
+  digest = "1:5b5abfb3360275c1306cfa08a92ca2f874251d0633858c0ef0b7c11b254517b3"
   name = "github.com/mitchellh/reflectwalk"
   packages = ["."]
+  pruneopts = "UT"
   revision = "eecf4c70c626c7cfbb95c90195bc34d386c74ac6"
 
 [[projects]]
   branch = "master"
+  digest = "1:0e1e5f960c58fdc677212fcc70e55042a0084d367623e51afbdb568963832f5d"
   name = "github.com/nu7hatch/gouuid"
   packages = ["."]
+  pruneopts = "UT"
   revision = "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
 
 [[projects]]
   branch = "master"
+  digest = "1:b001460ea94194a5d9961274289ff5b64af7eeb724c474ce6188a4eb33bd2a0f"
   name = "github.com/packer-community/winrmcp"
   packages = ["winrmcp"]
+  pruneopts = "UT"
   revision = "81144009af586de8e7729b829266f09dd0d59701"
 
 [[projects]]
+  digest = "1:7500e93cd5f7a3c5029757c7826d58cfd8a55cd539c1d0853f307a6193433143"
   name = "github.com/pkg/sftp"
   packages = ["."]
+  pruneopts = "UT"
   revision = "e84cc8c755ca39b7b64f510fe1fffc1b51f210a5"
 
 [[projects]]
+  digest = "1:48b859865fccf8a7f171535e1b9f4803057697e72aeab7f762b65fabd1ab5aa0"
   name = "github.com/ugorji/go"
   packages = ["codec"]
+  pruneopts = "UT"
   revision = "646ae4a518c1c3be0739df898118d9bccf993858"
 
 [[projects]]
   branch = "master"
+  digest = "1:363e89f0073f7893ff3b54c8509d14a8770fd691d5ff0044c9b1fd040af34dd1"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
@@ -234,22 +289,26 @@
     "md4",
     "poly1305",
     "ssh",
-    "ssh/agent"
+    "ssh/agent",
   ]
+  pruneopts = "UT"
   revision = "c3a3ad6d03f7a915c0f7e194b7152974bb73d287"
 
 [[projects]]
   branch = "master"
+  digest = "1:507c43a99a1a1d4e7a98f0be656c93b3e856474ff5312b0d6abb9ef2ed824f19"
   name = "golang.org/x/net"
   packages = [
     "html",
     "html/atom",
     "html/charset",
-    "proxy"
+    "proxy",
   ]
+  pruneopts = "UT"
   revision = "24dd3780ca4f75fed9f321890729414a4b5d3f13"
 
 [[projects]]
+  digest = "1:aa4d6967a3237f8367b6bf91503964a77183ecf696f1273e8ad3551bb4412b5f"
   name = "golang.org/x/text"
   packages = [
     "encoding",
@@ -268,14 +327,28 @@
     "language",
     "runes",
     "transform",
-    "unicode/cldr"
+    "unicode/cldr",
   ]
+  pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "39b23253d229ecca7212589915023fe83994687c762593d9783f535d4490660a"
+  input-imports = [
+    "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/awserr",
+    "github.com/aws/aws-sdk-go/aws/request",
+    "github.com/aws/aws-sdk-go/service/ec2",
+    "github.com/aws/aws-sdk-go/service/ec2/ec2iface",
+    "github.com/golang/mock/gomock",
+    "github.com/hashicorp/packer/builder/amazon/common",
+    "github.com/hashicorp/packer/common",
+    "github.com/hashicorp/packer/helper/config",
+    "github.com/hashicorp/packer/packer",
+    "github.com/hashicorp/packer/packer/plugin",
+    "github.com/hashicorp/packer/template/interpolate",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
