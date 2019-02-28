@@ -6,7 +6,7 @@
 Packer post-processor plugin for AMI management
 
 ## Description
-This post-processor assists your AMI management. It deletes old AMI and EBS snapshot using `amazon-ebs` builder's access configuration after bake new AMI.
+This post-processor cleanups old AMIs and EBS snapshots using `amazon-ebs` builder's access configuration after baking a new AMI.
 
 ## Installation
 Packer supports plugin system. Please read the following documentation:
@@ -25,7 +25,7 @@ unzip -j /tmp/packer-post-processor-amazon-ami-management_darwin_amd64.zip ~/.pa
 ```
 
 ## Usage
-The following example `template.json`:
+The following example is a template to keep only the latest 3 AMIs.
 
 ```json
 {
@@ -62,7 +62,8 @@ Type: `amazon-ami-management`
 
 Required:
   - `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
-  - `keep_releases` (integer) - The number of AMIs.
+  - `keep_releases` (integer) - The number of AMIs. This value is invalid when `keep_days` is set.
+  - `keep_days` (integer) - The number of days to keep AMIs. For example, if you specify `10`, AMIs created before 10 days will be deleted. This value is invalid when `keep_releases` is set.
   - `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
 
 Optional:
