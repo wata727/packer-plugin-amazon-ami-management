@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -25,12 +26,25 @@ func TestPostProcessor_ImplementsPostProcessor(t *testing.T) {
 	var _ packer.PostProcessor = new(PostProcessor)
 }
 
-func TestPostProcessor_Configure_validConfig(t *testing.T) {
+func TestPostProcessor_Configure_validConfigWithKeepReleases(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
 		"regions":       []string{"us-east-1"},
 		"identifier":    "packer-example",
 		"keep_releases": 3,
+	})
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_validConfigWithKeepDays(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":    []string{"us-east-1"},
+		"identifier": "packer-example",
+		"keep_days":  10,
 	})
 
 	if err != nil {
@@ -58,7 +72,6 @@ func TestPostProcessor_Configure_emptyIdentifier(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
 		"regions":       []string{"us-east-1"},
-		"identifier":    "",
 		"keep_releases": 3,
 	})
 
@@ -82,6 +95,54 @@ func TestPostProcessor_Configure_invalidKeepReleases(t *testing.T) {
 		t.Fatal("should cause validation errors")
 	}
 	if err.Error() != "`keep_releases` must be greater than 1. Please make sure that it is set correctly" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_invalidKeepDays(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":    []string{"us-east-1"},
+		"identifier": "packer-example",
+		"keep_days":  -1,
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "`keep_days` must be greater than 1. Please make sure that it is set correctly" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_setKeepReleasesAndKeepDays(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":       []string{"us-east-1"},
+		"identifier":    "packer-example",
+		"keep_releases": 3,
+		"keep_days":     10,
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "`keep_releases` and `keep_days` cannot be set as the same time" {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+}
+
+func TestPostProcessor_Configure_NeitherKeepReleasesNorKeepDaysIsSet(t *testing.T) {
+	p := new(PostProcessor)
+	err := p.Configure(map[string]interface{}{
+		"regions":    []string{"us-east-1"},
+		"identifier": "packer-example",
+	})
+
+	if err == nil {
+		t.Fatal("should cause validation errors")
+	}
+	if err.Error() != "`keep_releases` or `keep_days` must be greater than 1. Please make sure that it is set correctly" {
 		t.Fatalf("Unexpected error occurred: %s", err)
 	}
 }
@@ -218,6 +279,78 @@ func TestPostProcessor_PostProcess_manyImages(t *testing.T) {
 	}
 	p.config.Identifier = "packer-example"
 	p.config.KeepReleases = 2
+	p.config.Regions = []string{"us-east-1"}
+	artifact := &packer.MockArtifact{}
+	_, keep, err := p.PostProcess(testUI(), artifact)
+
+	if !keep {
+		t.Fatal("should keep")
+	}
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
+func TestPostProcessor_PostProcess_keepDays(t *testing.T) {
+	// Mocking time
+	getNow = func() time.Time {
+		return time.Date(2016, time.August, 11, 11, 0, 0, 0, time.UTC)
+	}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ec2mock := NewMockEC2API(ctrl)
+
+	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
+		Filters: []*ec2.Filter{
+			&ec2.Filter{
+				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
+				Values: []*string{
+					aws.String("packer-example"),
+				},
+			},
+		},
+	}).Return(&ec2.DescribeImagesOutput{
+		Images: []*ec2.Image{&ec2.Image{
+			ImageId:      aws.String("ami-12345a"),
+			CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
+		}, &ec2.Image{
+			ImageId:      aws.String("ami-12345b"),
+			CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
+		}, &ec2.Image{
+			ImageId:      aws.String("ami-12345c"),
+			CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
+			BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+				Ebs: &ec2.EbsBlockDevice{
+					SnapshotId: aws.String("snap-12345a"),
+				},
+			}, &ec2.BlockDeviceMapping{
+				Ebs: &ec2.EbsBlockDevice{
+					SnapshotId: aws.String("snap-12345b"),
+				},
+			}},
+		}},
+	}, nil)
+
+	ec2mock.EXPECT().DeregisterImage(&ec2.DeregisterImageInput{
+		ImageId: aws.String("ami-12345c"),
+		DryRun:  aws.Bool(false),
+	}).Return(&ec2.DeregisterImageOutput{}, nil)
+	ec2mock.EXPECT().DeleteSnapshot(&ec2.DeleteSnapshotInput{
+		SnapshotId: aws.String("snap-12345a"),
+		DryRun:     aws.Bool(false),
+	}).Return(&ec2.DeleteSnapshotOutput{}, nil)
+	ec2mock.EXPECT().DeleteSnapshot(&ec2.DeleteSnapshotInput{
+		SnapshotId: aws.String("snap-12345b"),
+		DryRun:     aws.Bool(false),
+	}).Return(&ec2.DeleteSnapshotOutput{}, nil)
+
+	p := PostProcessor{
+		testMode: true,
+		ec2conn:  ec2mock,
+	}
+	p.config.Identifier = "packer-example"
+	p.config.KeepDays = 10
 	p.config.Regions = []string{"us-east-1"}
 	artifact := &packer.MockArtifact{}
 	_, keep, err := p.PostProcess(testUI(), artifact)

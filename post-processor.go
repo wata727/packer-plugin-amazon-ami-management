@@ -26,6 +26,7 @@ type Config struct {
 
 	Identifier   string   `mapstructure:"identifier"`
 	KeepReleases int      `mapstructure:"keep_releases"`
+	KeepDays     int      `mapstructure:"keep_days"`
 	Regions      []string `mapstructure:"regions"`
 	DryRun       bool     `mapstructure:"dry_run"`
 
@@ -57,8 +58,17 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	if p.config.Identifier == "" {
 		return errors.New("empty `identifier` is not allowed. Please make sure that it is set correctly")
 	}
-	if p.config.KeepReleases < 1 {
+	if p.config.KeepReleases != 0 && p.config.KeepDays != 0 {
+		return errors.New("`keep_releases` and `keep_days` cannot be set as the same time")
+	}
+	if p.config.KeepReleases == 0 && p.config.KeepDays == 0 {
+		return errors.New("`keep_releases` or `keep_days` must be greater than 1. Please make sure that it is set correctly")
+	}
+	if p.config.KeepReleases < 1 && p.config.KeepDays == 0 {
 		return errors.New("`keep_releases` must be greater than 1. Please make sure that it is set correctly")
+	}
+	if p.config.KeepDays < 1 && p.config.KeepReleases == 0 {
+		return errors.New("`keep_days` must be greater than 1. Please make sure that it is set correctly")
 	}
 	if len(p.config.Regions) == 0 {
 		return errors.New("empty `regions` is not allowed. Please make sure that it is set correctly")
@@ -90,6 +100,8 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 	return artifact, true, nil
 }
 
+var getNow = time.Now
+
 func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
 	log.Println("Describing images")
 	output, err := p.ec2conn.DescribeImages(&ec2.DescribeImagesInput{
@@ -114,9 +126,19 @@ func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
 	})
 
 	log.Println("Deleting old images...")
+	now := getNow().UTC()
 	for i, image := range output.Images {
-		if i < p.config.KeepReleases {
+		if p.config.KeepReleases != 0 && i < p.config.KeepReleases {
 			continue
+		}
+		if p.config.KeepDays != 0 {
+			creationDate, err := time.ParseInLocation("2006-01-02T15:04:05.000Z", *image.CreationDate, time.UTC)
+			if err != nil {
+				return err
+			}
+			if creationDate.Add(time.Duration(p.config.KeepDays) * 24 * time.Hour).After(now) {
+				continue
+			}
 		}
 		ui.Message(p.uiMessage(fmt.Sprintf("Deleting image: %s", *image.ImageId)))
 		log.Printf("Deleting AMI (%s)", *image.ImageId)
