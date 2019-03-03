@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/config"
@@ -85,10 +84,13 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			if err != nil {
 				return nil, true, err
 			}
-			p.cleaner = NewCleaner(
-				ec2.New(sess.Copy(&aws.Config{Region: aws.String(region)})),
+			p.cleaner, err = NewCleaner(
+				sess.Copy(&aws.Config{Region: aws.String(region)}),
 				p.config,
 			)
+			if err != nil {
+				return nil, true, err
+			}
 		}
 
 		images, err := p.cleaner.RetrieveCandidateImages()
@@ -98,9 +100,14 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		log.Println("Deleting old images...")
 		for _, image := range images {
 			ui.Message(p.uiMessage(fmt.Sprintf("Deleting image: %s", *image.ImageId)))
-			err := p.cleaner.DeleteImage(image)
-			if err != nil {
-				return nil, true, err
+			used := p.cleaner.IsUsed(image)
+			if used != nil {
+				ui.Message(fmt.Sprintf("[WARN] %s is used in %s: %s. Skipped...", *image.ImageId, used.Type, used.ID))
+			} else {
+				err := p.cleaner.DeleteImage(image)
+				if err != nil {
+					return nil, true, err
+				}
 			}
 		}
 	}

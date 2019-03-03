@@ -154,8 +154,12 @@ func TestPostProcessor_PostProcess(t *testing.T) {
 		},
 		nil,
 	)
+	cleanermock.EXPECT().IsUsed(&ec2.Image{ImageId: aws.String("ami-12345a")}).Return(nil)
 	cleanermock.EXPECT().DeleteImage(&ec2.Image{ImageId: aws.String("ami-12345a")}).Return(nil)
-	cleanermock.EXPECT().DeleteImage(&ec2.Image{ImageId: aws.String("ami-12345b")}).Return(nil)
+	cleanermock.EXPECT().IsUsed(&ec2.Image{ImageId: aws.String("ami-12345b")}).Return(&Used{
+		ID:   "i-12345678",
+		Type: "instance",
+	})
 
 	p := PostProcessor{
 		testMode: true,

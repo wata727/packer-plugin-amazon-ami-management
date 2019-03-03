@@ -1,12 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/autoscaling"
+	"github.com/aws/aws-sdk-go/service/autoscaling/autoscalingiface"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 )
@@ -17,22 +21,50 @@ import (
 type AbstractCleaner interface {
 	RetrieveCandidateImages() ([]*ec2.Image, error)
 	DeleteImage(*ec2.Image) error
+	IsUsed(*ec2.Image) *Used
 }
 
 // Cleaner is a wrapper of aws-sdk client
 type Cleaner struct {
-	ec2conn ec2iface.EC2API
-	config  Config
-	now     time.Time
+	ec2conn         ec2iface.EC2API
+	autoscalingconn autoscalingiface.AutoScalingAPI
+	config          Config
+	now             time.Time
+	used            map[string]*Used
+}
+
+// Used is metadata about the details of the image being used
+type Used struct {
+	Type string
+	ID   string
 }
 
 // NewCleaner returns a new cleaner
-func NewCleaner(conn ec2iface.EC2API, config Config) *Cleaner {
-	return &Cleaner{
-		ec2conn: conn,
-		config:  config,
-		now:     time.Now().UTC(),
+func NewCleaner(sess *session.Session, config Config) (*Cleaner, error) {
+	cleaner := &Cleaner{
+		ec2conn:         ec2.New(sess),
+		autoscalingconn: autoscaling.New(sess),
+		config:          config,
+		now:             time.Now().UTC(),
+		used:            map[string]*Used{},
 	}
+
+	err := cleaner.setInstanceUsed()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cleaner.setLaunchConfigurationUsed()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cleaner.setLaunchTemplateUsed()
+	if err != nil {
+		return nil, err
+	}
+
+	return cleaner, nil
 }
 
 // RetrieveCandidateImages returns the images of candidate to be deleted.
@@ -118,5 +150,78 @@ func (c *Cleaner) DeleteImage(image *ec2.Image) error {
 		}
 	}
 
+	return nil
+}
+
+// IsUsed checks whether a passed image is used.
+// If used, it returns Used instead of nil.
+func (c *Cleaner) IsUsed(image *ec2.Image) *Used {
+	return c.used[*image.ImageId]
+}
+
+func (c *Cleaner) setInstanceUsed() error {
+	ret, err := c.ec2conn.DescribeInstances(&ec2.DescribeInstancesInput{
+		Filters: []*ec2.Filter{
+			{
+				Name: aws.String("instance-state-name"),
+				Values: []*string{
+					aws.String("pending"),
+					aws.String("running"),
+					aws.String("shutting-down"),
+					aws.String("stopping"),
+					aws.String("stopped"),
+				},
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	for _, reservation := range ret.Reservations {
+		for _, instance := range reservation.Instances {
+			c.used[*instance.ImageId] = &Used{
+				ID:   *instance.InstanceId,
+				Type: "instance",
+			}
+		}
+	}
+	return nil
+}
+
+func (c *Cleaner) setLaunchConfigurationUsed() error {
+	ret, err := c.autoscalingconn.DescribeLaunchConfigurations(&autoscaling.DescribeLaunchConfigurationsInput{})
+	if err != nil {
+		return err
+	}
+	for _, lc := range ret.LaunchConfigurations {
+		c.used[*lc.ImageId] = &Used{
+			ID:   *lc.LaunchConfigurationName,
+			Type: "launch configuration",
+		}
+	}
+	return nil
+}
+
+func (c *Cleaner) setLaunchTemplateUsed() error {
+	ret, err := c.ec2conn.DescribeLaunchTemplates(&ec2.DescribeLaunchTemplatesInput{})
+	if err != nil {
+		return err
+	}
+
+	for _, lt := range ret.LaunchTemplates {
+		versions, err := c.ec2conn.DescribeLaunchTemplateVersions(&ec2.DescribeLaunchTemplateVersionsInput{
+			LaunchTemplateId: lt.LaunchTemplateId,
+		})
+		if err != nil {
+			return err
+		}
+
+		for _, ltv := range versions.LaunchTemplateVersions {
+			c.used[*ltv.LaunchTemplateData.ImageId] = &Used{
+				ID:   fmt.Sprintf("%s (%d)", *ltv.LaunchTemplateName, *ltv.VersionNumber),
+				Type: "launch template",
+			}
+		}
+	}
 	return nil
 }

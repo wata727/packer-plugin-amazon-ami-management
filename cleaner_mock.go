@@ -57,3 +57,15 @@ func (m *MockAbstractCleaner) DeleteImage(arg0 *ec2.Image) error {
 func (mr *MockAbstractCleanerMockRecorder) DeleteImage(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteImage", reflect.TypeOf((*MockAbstractCleaner)(nil).DeleteImage), arg0)
 }
+
+// IsUsed mocks base method
+func (m *MockAbstractCleaner) IsUsed(arg0 *ec2.Image) *Used {
+	ret := m.ctrl.Call(m, "IsUsed", arg0)
+	ret0, _ := ret[0].(*Used)
+	return ret0
+}
+
+// IsUsed indicates an expected call of IsUsed
+func (mr *MockAbstractCleanerMockRecorder) IsUsed(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsUsed", reflect.TypeOf((*MockAbstractCleaner)(nil).IsUsed), arg0)
+}
