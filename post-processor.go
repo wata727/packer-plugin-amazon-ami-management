@@ -4,13 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"sort"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/config"
@@ -37,7 +33,7 @@ type Config struct {
 // Packer performs `PostProcess()` method of this processor
 type PostProcessor struct {
 	testMode bool
-	ec2conn  ec2iface.EC2API
+	cleaner  AbstractCleaner
 	config   Config
 }
 
@@ -89,93 +85,27 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			if err != nil {
 				return nil, true, err
 			}
-			p.ec2conn = ec2.New(sess.Copy(&aws.Config{Region: aws.String(region)}))
+			p.cleaner = NewCleaner(
+				ec2.New(sess.Copy(&aws.Config{Region: aws.String(region)})),
+				p.config,
+			)
 		}
 
-		if err := p.manageAMIs(ui); err != nil {
+		images, err := p.cleaner.RetrieveCandidateImages()
+		if err != nil {
 			return nil, true, err
+		}
+		log.Println("Deleting old images...")
+		for _, image := range images {
+			ui.Message(p.uiMessage(fmt.Sprintf("Deleting image: %s", *image.ImageId)))
+			err := p.cleaner.DeleteImage(image)
+			if err != nil {
+				return nil, true, err
+			}
 		}
 	}
 
 	return artifact, true, nil
-}
-
-var getNow = time.Now
-
-func (p *PostProcessor) manageAMIs(ui packer.Ui) error {
-	log.Println("Describing images")
-	output, err := p.ec2conn.DescribeImages(&ec2.DescribeImagesInput{
-		Filters: []*ec2.Filter{
-			{
-				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
-				Values: []*string{
-					aws.String(p.config.Identifier),
-				},
-			},
-		},
-	})
-	if err != nil {
-		return err
-	}
-
-	// Sort in descending order by creation date
-	sort.Slice(output.Images, func(i, j int) bool {
-		iTime, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[i].CreationDate)
-		jTime, _ := time.Parse("2006-01-02T15:04:05.000Z", *output.Images[j].CreationDate)
-		return iTime.After(jTime)
-	})
-
-	log.Println("Deleting old images...")
-	now := getNow().UTC()
-	for i, image := range output.Images {
-		if p.config.KeepReleases != 0 && i < p.config.KeepReleases {
-			continue
-		}
-		if p.config.KeepDays != 0 {
-			creationDate, err := time.ParseInLocation("2006-01-02T15:04:05.000Z", *image.CreationDate, time.UTC)
-			if err != nil {
-				return err
-			}
-			if creationDate.Add(time.Duration(p.config.KeepDays) * 24 * time.Hour).After(now) {
-				continue
-			}
-		}
-		ui.Message(p.uiMessage(fmt.Sprintf("Deleting image: %s", *image.ImageId)))
-		log.Printf("Deleting AMI (%s)", *image.ImageId)
-		if _, err := p.ec2conn.DeregisterImage(&ec2.DeregisterImageInput{
-			ImageId: image.ImageId,
-			DryRun:  aws.Bool(p.config.DryRun),
-		}); err != nil {
-			if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "DryRunOperation" {
-				// noop
-			} else {
-				return err
-			}
-		}
-
-		// DeregisterImage method only performs to AMI
-		// Because it retains snapshot. Following operation is deleting snapshots.
-		log.Printf("Deleting snapshot related to AMI (%s)", *image.ImageId)
-		for _, device := range image.BlockDeviceMappings {
-			// skip delete if use ephemeral devise
-			if device.Ebs == nil {
-				continue
-			}
-			log.Printf("Deleting snapshot (%s) related to AMI (%s)", *device.Ebs.SnapshotId, *image.ImageId)
-			if _, err := p.ec2conn.DeleteSnapshot(&ec2.DeleteSnapshotInput{
-				SnapshotId: device.Ebs.SnapshotId,
-				DryRun:     aws.Bool(p.config.DryRun),
-			}); err != nil {
-				if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "DryRunOperation" {
-					// noop
-				} else {
-					return err
-				}
-			}
-		}
-	}
-
-	return nil
 }
 
 func (p *PostProcessor) uiMessage(message string) string {
