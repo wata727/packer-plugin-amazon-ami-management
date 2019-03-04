@@ -1,3 +1,23 @@
+## v0.6.0 (2019-03-04)
+
+### Changes
+
+- Remove only unused images ([#32](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/32))
+  - Previously, the post-processor removes images even if the image is already used elsewhere.
+- Change the minimal set permissions necessary ([#32](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/32))
+  - Additional API operations are required to check whether if an image is in use. See [here](https://github.com/wata727/packer-post-processor-amazon-ami-management/tree/v0.6.0#iam-task-or-instance-role) for updated permissions.
+
+### Enhancements
+
+- Add `dry_run` option ([#26](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/26))
+- Add `keep_days` option ([#31](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/31))
+
+### Others
+
+- Update README.md ([#23](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/23))
+- readme: added osx installation instructions ([#28](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/28))
+- Go 1.12 ([#29](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/29))
+
 ## v0.5.0 (2018-06-16)
 
 ### Changes
