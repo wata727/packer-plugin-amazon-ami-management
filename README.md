@@ -69,6 +69,58 @@ Required:
 Optional:
   - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
+### IAM Task or Instance Role
+
+The post-processor requires additional permissions to work. Below is the difference from [the minimum permissions required by Packer](https://www.packer.io/docs/builders/amazon.html#iam-task-or-instance-role).
+
+```diff
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+      "Effect": "Allow",
+      "Action" : [
++       "autoscaling:DescribeLaunchConfigurations",
+        "ec2:AttachVolume",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:CopyImage",
+        "ec2:CreateImage",
+        "ec2:CreateKeypair",
+        "ec2:CreateSecurityGroup",
+        "ec2:CreateSnapshot",
+        "ec2:CreateTags",
+        "ec2:CreateVolume",
+        "ec2:DeleteKeyPair",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteSnapshot",
+        "ec2:DeleteVolume",
+        "ec2:DeregisterImage",
+        "ec2:DescribeImageAttribute",
+        "ec2:DescribeImages",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
++       "ec2:DescribeLaunchTemplates",
++       "ec2:DescribeLaunchTemplateVersions",
+        "ec2:DescribeRegions",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DetachVolume",
+        "ec2:GetPasswordData",
+        "ec2:ModifyImageAttribute",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:ModifySnapshotAttribute",
+        "ec2:RegisterImage",
+        "ec2:RunInstances",
+        "ec2:StopInstances",
+        "ec2:TerminateInstances"
+      ],
+      "Resource" : "*"
+  }]
+}
+```
+
 ## Developing Plugin
 
 If you wish to build this plugin on your environment, you can use GNU Make build system.
