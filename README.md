@@ -17,6 +17,8 @@ You can download binary built for your architecture from [latest releases](https
 
 For example, to install v0.6.0 for 64bit OSX
 
+For Linux based OS, you can use the install_linux.sh to automate the installation process
+
 ```sh
 mkdir -p ~/.packer.d/plugins
 wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.6.0/packer-post-processor-amazon-ami-management_darwin_amd64.zip -P /tmp/
