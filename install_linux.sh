@@ -29,7 +29,7 @@ if [ $retVal -ne 0 ]; then
   echo "Failed to download the plugin"
   exit $retVal
 else
-  echo "Downlaod was successfully"
+  echo "Download was successfully"
 fi
 
 
