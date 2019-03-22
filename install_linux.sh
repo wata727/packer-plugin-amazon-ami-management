@@ -23,7 +23,7 @@ get_latest_release() {
 echo "Looking up the latest version ..."
 latest_version=$(get_latest_release)
 echo "Downloading latest version of $latest_version"
-curl -L -o /tmp/packer-post-processor-amazon-ami-management.zip "https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/${latest_version}/packer-post-processor-amazon-ami-management_${latest_version}_${os}_${github_release_arch}.zip"
+curl -L -o /tmp/packer-post-processor-amazon-ami-management.zip "https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/${latest_version}/packer-post-processor-amazon-ami-management_${latest_version//v}_${os}_${github_release_arch}.zip"
 retVal=$?
 if [ $retVal -ne 0 ]; then
   echo "Failed to download the plugin"
