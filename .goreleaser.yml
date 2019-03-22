@@ -1,0 +1,34 @@
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod download
+    - go generate ./...
+builds:
+  - goos:
+      - linux
+      - darwin
+      - freebsd
+      - netbsd
+      - openbsd
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+archive:
+  format: zip
+  files:
+    - LICENSE
+    - NOTICE.md
+changelog:
+  skip: true
+checksum:
+  name_template: 'checksums.txt'
+release:
+  github:
+    owner: wata727
+    name: packer-post-processor-amazon-ami-management
+  draft: true
+snapshot:
+  name_template: "{{ .Tag }}-dev"
