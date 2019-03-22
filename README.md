@@ -16,13 +16,13 @@ https://www.packer.io/docs/extend/plugins.html
 
 You can download binary built for your architecture from [latest releases](https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/latest).
 
-For example, to install v0.6.0 for 64bit OSX
+For example, to install v0.6.1 for 64bit OSX
 
 For Linux based OS, you can use the install_linux.sh to automate the installation process
 
 ```sh
 mkdir -p ~/.packer.d/plugins
-wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.6.0/packer-post-processor-amazon-ami-management_darwin_amd64.zip -P /tmp/
+wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.6.1/packer-post-processor-amazon-ami-management_v0.6.1_darwin_amd64.zip -P /tmp/
 cd ~/.packer.d/plugins
 unzip -j /tmp/packer-post-processor-amazon-ami-management_darwin_amd64.zip -d ~/.packer.d/plugins
 ```

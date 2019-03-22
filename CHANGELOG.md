@@ -1,3 +1,15 @@
+## v0.6.1 (2019-03-22)
+
+There is no change from v0.6.0. Only changes related to the project, such as documentation.
+
+## Others
+
+- making for easier copy and paste ([#33](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/33))
+- Add license scan report and status ([#34](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/34))
+- automate the Installation for linux environment ([#35](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/35))
+- Add NOTICE.md ([#36](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/36))
+- Create releases with GoReleaser and GitHub Action ([#37](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/37))
+
 ## v0.6.0 (2019-03-04)
 
 ### Changes
