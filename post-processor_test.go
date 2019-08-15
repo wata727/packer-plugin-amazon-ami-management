@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -169,11 +170,14 @@ func TestPostProcessor_PostProcess(t *testing.T) {
 		},
 	}
 
-	_, keep, err := p.PostProcess(testUI(), &packer.MockArtifact{})
+	_, keep, forceOverride, err := p.PostProcess(context.Background(), testUI(), &packer.MockArtifact{})
 	if err != nil {
 		t.Fatalf("Unexpected error occurred: %s", err)
 	}
 	if !keep {
 		t.Fatal("should keep")
+	}
+	if forceOverride {
+		t.Fatal("should not override")
 	}
 }
