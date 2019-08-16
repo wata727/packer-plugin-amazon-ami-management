@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -73,7 +74,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 }
 
 // PostProcess deletes old AMI and snapshot so as to maintain the number of AMIs expected
-func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
+func (p *PostProcessor) PostProcess(ctx context.Context, ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, bool, error) {
 	log.Println("Running the post-processor")
 
 	for _, region := range p.config.Regions {
@@ -82,20 +83,20 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		if !p.testMode {
 			sess, err := p.config.AccessConfig.Session()
 			if err != nil {
-				return nil, true, err
+				return nil, true, false, err
 			}
 			p.cleaner, err = NewCleaner(
 				sess.Copy(&aws.Config{Region: aws.String(region)}),
 				p.config,
 			)
 			if err != nil {
-				return nil, true, err
+				return nil, true, false, err
 			}
 		}
 
 		images, err := p.cleaner.RetrieveCandidateImages()
 		if err != nil {
-			return nil, true, err
+			return nil, true, false, err
 		}
 		log.Println("Deleting old images...")
 		for _, image := range images {
@@ -106,13 +107,13 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			} else {
 				err := p.cleaner.DeleteImage(image)
 				if err != nil {
-					return nil, true, err
+					return nil, true, false, err
 				}
 			}
 		}
 	}
 
-	return artifact, true, nil
+	return artifact, true, false, nil
 }
 
 func (p *PostProcessor) uiMessage(message string) string {
