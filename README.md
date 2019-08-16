@@ -72,6 +72,17 @@ Required:
 Optional:
   - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
+The following attibutes are also available. These are optional and used in the same way as AWS Builder:
+
+- `access_key`
+- `secret_key`
+- `profile`
+- `token`
+- `mfa_code`
+- `custom_endpoint_ec2`
+- `skip_region_validation`
+- `skip_metadata_api_check`
+
 ### IAM Task or Instance Role
 
 The post-processor requires additional permissions to work. Below is the difference from [the minimum permissions required by Packer](https://www.packer.io/docs/builders/amazon.html#iam-task-or-instance-role).
