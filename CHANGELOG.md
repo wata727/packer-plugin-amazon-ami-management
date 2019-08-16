@@ -1,3 +1,14 @@
+## v0.7.0 (2019-08-16)
+
+### Enhancements
+
+- Bump packer and others dependencies ([#42](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/42))
+
+### Others
+
+- Migrate main.workflow to new yaml syntaxes ([#43](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/43))
+- Update README for AWS configuration attributes ([#47](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/47))
+
 ## v0.6.2 (2019-04-11)
 
 Re-release due to [#151](https://github.com/wata727/packer-post-processor-amazon-ami-management/issues/39). There is no change from v0.6.1. 
