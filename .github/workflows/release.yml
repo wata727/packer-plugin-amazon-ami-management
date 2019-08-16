@@ -1,14 +1,17 @@
-on: push
 name: Release
+
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - v*
+
 jobs:
-  is-tag:
+  release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: is-tag
-      uses: actions/bin/filter@master
-      with:
-        args: tag
     - name: goreleaser
       uses: docker://goreleaser/goreleaser:v0.104
       env:
