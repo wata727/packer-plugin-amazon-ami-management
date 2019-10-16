@@ -22,7 +22,7 @@ For Linux based OS, you can use the install_linux.sh to automate the installatio
 
 ```sh
 mkdir -p ~/.packer.d/plugins
-wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.6.2/packer-post-processor-amazon-ami-management_0.7.0_darwin_amd64.zip -P /tmp/
+wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.7.0/packer-post-processor-amazon-ami-management_0.7.0_darwin_amd64.zip -P /tmp/
 cd ~/.packer.d/plugins
 unzip -j /tmp/packer-post-processor-amazon-ami-management_0.7.0_darwin_amd64.zip -d ~/.packer.d/plugins
 ```
