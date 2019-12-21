@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/hashicorp/hcl/v2/hcldec"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
 	"github.com/hashicorp/packer/helper/config"
 	"github.com/hashicorp/packer/packer"
@@ -19,6 +20,11 @@ type PostProcessor struct {
 	testMode bool
 	cleaner  AbstractCleaner
 	config   Config
+}
+
+// ConfigSpec returns HCL object spec
+func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec {
+	return p.config.FlatMapstructure().HCL2Spec()
 }
 
 // Configure generates post-processor's configuration
