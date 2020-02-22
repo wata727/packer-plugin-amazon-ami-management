@@ -1,3 +1,19 @@
+## v0.8.0 (2020-02-22)
+
+### Enhacements
+
+- Add support for Packer 1.5.4 ([#59](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/59))
+
+### Others
+
+- Stop GitHub Actions ([#48](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/48))
+- Fix wrong download URL ([#57](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/57))
+- Remove FOSSA ([#63](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/63))
+- Retry GitHub Actions ([#50](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/50))
+- Bump github.com/golang/mock from 1.3.1 to 1.4.0 ([#61](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/61))
+- Bump github.com/aws/aws-sdk-go from 1.24.1 to 1.29.8 ([#62](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/62))
+- Run tests on GitHub Actions ([#64](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/64))
+
 ## v0.7.0 (2019-08-16)
 
 ### Enhancements
