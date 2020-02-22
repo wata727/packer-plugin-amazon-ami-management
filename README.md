@@ -1,5 +1,5 @@
 # packer-post-processor-amazon-ami-management
-[![Build Status](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management.svg?branch=master)](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management)
+[![Build Status](https://github.com/wata727/packer-post-processor-amazon-ami-management/workflows/build/badge.svg?branch=master)](https://github.com/wata727/packer-post-processor-amazon-ami-management/actions)
 [![GitHub release](https://img.shields.io/github/release/wata727/packer-post-processor-amazon-ami-management.svg)](https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/latest)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
@@ -167,8 +167,8 @@ The post-processor requires additional permissions to work. Below is the differe
 ## Developing Plugin
 
 If you wish to build this plugin on your environment, you can use GNU Make build system.
-But this Makefile depends on [Go](https://golang.org/) 1.12 or more. At First, you should install Go.
+But this Makefile depends on [Go](https://golang.org/) 1.13 or more. At First, you should install Go.
 
 ```
-$ GO111MODULE=on make build
+$ make build
 ```
