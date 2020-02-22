@@ -1,0 +1,37 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  test:
+    name: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Set up Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+    - name: Restore Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: go-pkg-mod-${{ hashFiles('go.sum') }}
+        restore-keys: |
+          go-pkg-mod-
+    - name: Run build
+      run: make build
+    - name: Upload Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: packer-post-processor-amazon-ami-management
+        path: packer-post-processor-amazon-ami-management

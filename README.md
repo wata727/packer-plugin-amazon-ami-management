@@ -167,8 +167,8 @@ The post-processor requires additional permissions to work. Below is the differe
 ## Developing Plugin
 
 If you wish to build this plugin on your environment, you can use GNU Make build system.
-But this Makefile depends on [Go](https://golang.org/) 1.12 or more. At First, you should install Go.
+But this Makefile depends on [Go](https://golang.org/) 1.13 or more. At First, you should install Go.
 
 ```
-$ GO111MODULE=on make build
+$ make build
 ```
