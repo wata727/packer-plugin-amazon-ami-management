@@ -59,6 +59,36 @@ The following example is a template to keep only the latest 3 AMIs.
 }
 ```
 
+The following is example in HCL2 (after Packer v1.5.0):
+
+```hcl
+source "amazon-ebs" "example" {
+  region = "us-east-1"
+  source_ami = "ami-6869aa05"
+  instance_type = "t2.micro"
+  ssh_username = "ec2-user"
+  ssh_pty = true
+  ami_name = "packer-example"
+  tags {
+    Amazon_AMI_Management_Identifier = "packer-example"
+  }
+}
+
+build {
+  sources = ["source.amazon-ebs.example"]
+
+  provisioner "shell" {
+    inline = ["echo 'running...'"]
+  }
+
+  post-processor "amazon-ami-management" {
+    regions = ["us-east-1"]
+    identifier = "packer-example"
+    keep_releases = 3
+  }
+}
+```
+
 ### Configuration
 
 Type: `amazon-ami-management`

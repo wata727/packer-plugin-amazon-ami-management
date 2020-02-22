@@ -7,27 +7,12 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/hashicorp/hcl/v2/hcldec"
 	awscommon "github.com/hashicorp/packer/builder/amazon/common"
-	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/config"
 	"github.com/hashicorp/packer/packer"
 	"github.com/hashicorp/packer/template/interpolate"
 )
-
-// Config is a post-processor's configuration
-// PostProcessor generates it using Packer's configuration in `Configure()` method
-type Config struct {
-	common.PackerConfig    `mapstructure:",squash"`
-	awscommon.AccessConfig `mapstructure:",squash"`
-
-	Identifier   string   `mapstructure:"identifier"`
-	KeepReleases int      `mapstructure:"keep_releases"`
-	KeepDays     int      `mapstructure:"keep_days"`
-	Regions      []string `mapstructure:"regions"`
-	DryRun       bool     `mapstructure:"dry_run"`
-
-	ctx interpolate.Context
-}
 
 // PostProcessor is the core of this library
 // Packer performs `PostProcess()` method of this processor
@@ -35,6 +20,11 @@ type PostProcessor struct {
 	testMode bool
 	cleaner  AbstractCleaner
 	config   Config
+}
+
+// ConfigSpec returns HCL object spec
+func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec {
+	return p.config.FlatMapstructure().HCL2Spec()
 }
 
 // Configure generates post-processor's configuration
