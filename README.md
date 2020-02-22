@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management.svg?branch=master)](https://travis-ci.org/wata727/packer-post-processor-amazon-ami-management)
 [![GitHub release](https://img.shields.io/github/release/wata727/packer-post-processor-amazon-ami-management.svg)](https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/latest)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fwata727%2Fpacker-post-processor-amazon-ami-management.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fwata727%2Fpacker-post-processor-amazon-ami-management?ref=badge_shield)
 
 Packer post-processor plugin for AMI management
 
@@ -173,7 +172,3 @@ But this Makefile depends on [Go](https://golang.org/) 1.12 or more. At First, y
 ```
 $ GO111MODULE=on make build
 ```
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fwata727%2Fpacker-post-processor-amazon-ami-management.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fwata727%2Fpacker-post-processor-amazon-ami-management?ref=badge_large)
