@@ -8,5 +8,5 @@ require (
 	github.com/golang/mock v1.4.0
 	github.com/hashicorp/hcl/v2 v2.3.0
 	github.com/hashicorp/packer v1.5.4
-	github.com/zclconf/go-cty v1.2.1
+	github.com/zclconf/go-cty v1.3.0
 )
