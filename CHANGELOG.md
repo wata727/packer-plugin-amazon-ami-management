@@ -1,5 +1,10 @@
 ## v0.9.0 (2020-10-17)
 
+### Changes
+
+- Upgrade Go 1.15 ([#131](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/131))
+  - darwin/386 build will no longer available from the release. See also https://golang.org/doc/go1.15#darwin
+
 ### Bug Fixes
 
 - Fix panic by nil pointer dereference ([#133](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/133))
@@ -16,7 +21,6 @@
 - Update actions/checkout requirement to v2.3.3 ([#127](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/127))
 - Bump actions/setup-go from v1 to v2.1.3 ([#128](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/128))
 - Bump actions/cache from v1 to v2.1.2 ([#129](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/129))
-- Upgrade Go 1.15 ([#131](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/131))
 - Make mock from interface ([#132](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/132))
 
 ## v0.8.0 (2020-02-22)
