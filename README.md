@@ -67,8 +67,8 @@ source "amazon-ebs" "example" {
   instance_type = "t2.micro"
   ssh_username = "ec2-user"
   ssh_pty = true
-  ami_name = "packer-example"
-  tags {
+  ami_name = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  tags = {
     Amazon_AMI_Management_Identifier = "packer-example"
   }
 }
