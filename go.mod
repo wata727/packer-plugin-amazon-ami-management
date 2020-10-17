@@ -7,6 +7,6 @@ require (
 	github.com/dylanmei/winrmtest v0.0.0-20190225150635-99b7fe2fddf1 // indirect
 	github.com/golang/mock v1.4.4
 	github.com/hashicorp/hcl/v2 v2.6.0
-	github.com/hashicorp/packer v1.5.4
+	github.com/hashicorp/packer v1.6.4
 	github.com/zclconf/go-cty v1.6.1
 )
