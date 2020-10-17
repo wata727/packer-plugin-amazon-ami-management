@@ -11,8 +11,6 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-//go:generate mockgen -source vendor/github.com/aws/aws-sdk-go/service/ec2/ec2iface/interface.go -destination ec2iface_mock.go -package main
-
 func TestCleaner_RetrieveCandidateImages_KeepReleases(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
