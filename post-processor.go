@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/packer/template/interpolate"
 )
 
-//go:generate mockgen -source vendor/github.com/aws/aws-sdk-go/service/ec2/ec2iface/interface.go -destination ec2iface_mock.go -package main
+//go:generate mockgen -destination ec2iface_mock.go -package main github.com/aws/aws-sdk-go/service/ec2/ec2iface EC2API
 
 // PostProcessor is the core of this library
 // Packer performs `PostProcess()` method of this processor

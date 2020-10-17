@@ -18,7 +18,9 @@ type FlatConfig struct {
 	PackerUserVars        map[string]string                 `mapstructure:"packer_user_variables" cty:"packer_user_variables"`
 	PackerSensitiveVars   []string                          `mapstructure:"packer_sensitive_variables" cty:"packer_sensitive_variables"`
 	AccessKey             *string                           `mapstructure:"access_key" required:"true" cty:"access_key"`
+	AssumeRole            *common.FlatAssumeRoleConfig      `mapstructure:"assume_role" required:"false" cty:"assume_role"`
 	CustomEndpointEc2     *string                           `mapstructure:"custom_endpoint_ec2" required:"false" cty:"custom_endpoint_ec2"`
+	CredsFilename         *string                           `mapstructure:"shared_credentials_file" required:"false" cty:"shared_credentials_file"`
 	DecodeAuthZMessages   *bool                             `mapstructure:"decode_authorization_messages" required:"false" cty:"decode_authorization_messages"`
 	InsecureSkipTLSVerify *bool                             `mapstructure:"insecure_skip_tls_verify" required:"false" cty:"insecure_skip_tls_verify"`
 	MaxRetries            *int                              `mapstructure:"max_retries" required:"false" cty:"max_retries"`
@@ -28,8 +30,10 @@ type FlatConfig struct {
 	SecretKey             *string                           `mapstructure:"secret_key" required:"true" cty:"secret_key"`
 	SkipValidation        *bool                             `mapstructure:"skip_region_validation" required:"false" cty:"skip_region_validation"`
 	SkipMetadataApiCheck  *bool                             `mapstructure:"skip_metadata_api_check" cty:"skip_metadata_api_check"`
+	SkipCredsValidation   *bool                             `mapstructure:"skip_credential_validation" cty:"skip_credential_validation"`
 	Token                 *string                           `mapstructure:"token" required:"false" cty:"token"`
 	VaultAWSEngine        *common.FlatVaultAWSEngineOptions `mapstructure:"vault_aws_engine" required:"false" cty:"vault_aws_engine"`
+	PollingConfig         *common.FlatAWSPollingConfig      `mapstructure:"aws_polling" required:"false" cty:"aws_polling"`
 	Identifier            *string                           `mapstructure:"identifier" cty:"identifier"`
 	KeepReleases          *int                              `mapstructure:"keep_releases" cty:"keep_releases"`
 	KeepDays              *int                              `mapstructure:"keep_days" cty:"keep_days"`
@@ -57,7 +61,9 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"packer_user_variables":         &hcldec.BlockAttrsSpec{TypeName: "packer_user_variables", ElementType: cty.String, Required: false},
 		"packer_sensitive_variables":    &hcldec.AttrSpec{Name: "packer_sensitive_variables", Type: cty.List(cty.String), Required: false},
 		"access_key":                    &hcldec.AttrSpec{Name: "access_key", Type: cty.String, Required: false},
+		"assume_role":                   &hcldec.BlockSpec{TypeName: "assume_role", Nested: hcldec.ObjectSpec((*common.FlatAssumeRoleConfig)(nil).HCL2Spec())},
 		"custom_endpoint_ec2":           &hcldec.AttrSpec{Name: "custom_endpoint_ec2", Type: cty.String, Required: false},
+		"shared_credentials_file":       &hcldec.AttrSpec{Name: "shared_credentials_file", Type: cty.String, Required: false},
 		"decode_authorization_messages": &hcldec.AttrSpec{Name: "decode_authorization_messages", Type: cty.Bool, Required: false},
 		"insecure_skip_tls_verify":      &hcldec.AttrSpec{Name: "insecure_skip_tls_verify", Type: cty.Bool, Required: false},
 		"max_retries":                   &hcldec.AttrSpec{Name: "max_retries", Type: cty.Number, Required: false},
@@ -67,8 +73,10 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"secret_key":                    &hcldec.AttrSpec{Name: "secret_key", Type: cty.String, Required: false},
 		"skip_region_validation":        &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
 		"skip_metadata_api_check":       &hcldec.AttrSpec{Name: "skip_metadata_api_check", Type: cty.Bool, Required: false},
+		"skip_credential_validation":    &hcldec.AttrSpec{Name: "skip_credential_validation", Type: cty.Bool, Required: false},
 		"token":                         &hcldec.AttrSpec{Name: "token", Type: cty.String, Required: false},
 		"vault_aws_engine":              &hcldec.BlockSpec{TypeName: "vault_aws_engine", Nested: hcldec.ObjectSpec((*common.FlatVaultAWSEngineOptions)(nil).HCL2Spec())},
+		"aws_polling":                   &hcldec.BlockSpec{TypeName: "aws_polling", Nested: hcldec.ObjectSpec((*common.FlatAWSPollingConfig)(nil).HCL2Spec())},
 		"identifier":                    &hcldec.AttrSpec{Name: "identifier", Type: cty.String, Required: false},
 		"keep_releases":                 &hcldec.AttrSpec{Name: "keep_releases", Type: cty.Number, Required: false},
 		"keep_days":                     &hcldec.AttrSpec{Name: "keep_days", Type: cty.Number, Required: false},
