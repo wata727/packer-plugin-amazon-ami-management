@@ -1,3 +1,24 @@
+## v0.9.0 (2020-10-17)
+
+### Bug Fixes
+
+- Fix panic by nil pointer dereference ([#133](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/133))
+
+### Others
+
+- Fix download URL ([#82](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/82))
+- Bump github.com/hashicorp/hcl/v2 from 2.3.0 to 2.7.0 ([#93](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/93) [#130](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/130))
+- Bump github.com/golang/mock from 1.4.0 to 1.4.4 ([#107](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/107))
+- Bump github.com/zclconf/go-cty from 1.2.1 to 1.6.1 ([#115](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/115))
+- Bump github.com/hashicorp/packer from 1.5.4 to 1.6.4 ([#121](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/121))
+- Bump github.com/aws/aws-sdk-go from 1.29.8 to 1.35.9 ([#125](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/125))
+- Switch into GitHub's Dependabot ([#126](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/126))
+- Update actions/checkout requirement to v2.3.3 ([#127](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/127))
+- Bump actions/setup-go from v1 to v2.1.3 ([#128](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/128))
+- Bump actions/cache from v1 to v2.1.2 ([#129](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/129))
+- Upgrade Go 1.15 ([#131](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/131))
+- Make mock from interface ([#132](https://github.com/wata727/packer-post-processor-amazon-ami-management/pull/132))
+
 ## v0.8.0 (2020-02-22)
 
 ### Enhacements
