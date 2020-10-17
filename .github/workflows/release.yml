@@ -16,9 +16,9 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2.1.3
       with:
-        version: 1.13
+        version: 1.15
     - name: Run GoReleaser
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERSION: v0.116.0
+        VERSION: v0.143.0
       run: curl -sL https://git.io/goreleaser | bash
