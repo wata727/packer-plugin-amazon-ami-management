@@ -134,7 +134,7 @@ func (c *Cleaner) DeleteImage(image *ec2.Image) error {
 	log.Printf("Deleting snapshot related to AMI (%s)", *image.ImageId)
 	for _, device := range image.BlockDeviceMappings {
 		// skip delete if use ephemeral devise
-		if device.Ebs == nil {
+		if device.Ebs == nil || device.Ebs.SnapshotId == nil {
 			continue
 		}
 		log.Printf("Deleting snapshot (%s) related to AMI (%s)", *device.Ebs.SnapshotId, *image.ImageId)
@@ -179,6 +179,10 @@ func (c *Cleaner) setInstanceUsed() error {
 	}
 	for _, reservation := range ret.Reservations {
 		for _, instance := range reservation.Instances {
+			if instance.ImageId == nil {
+				continue
+			}
+
 			c.used[*instance.ImageId] = &Used{
 				ID:   *instance.InstanceId,
 				Type: "instance",
@@ -194,6 +198,10 @@ func (c *Cleaner) setLaunchConfigurationUsed() error {
 		return err
 	}
 	for _, lc := range ret.LaunchConfigurations {
+		if lc.ImageId == nil {
+			continue
+		}
+
 		c.used[*lc.ImageId] = &Used{
 			ID:   *lc.LaunchConfigurationName,
 			Type: "launch configuration",
@@ -217,6 +225,10 @@ func (c *Cleaner) setLaunchTemplateUsed() error {
 		}
 
 		for _, ltv := range versions.LaunchTemplateVersions {
+			if ltv.LaunchTemplateData == nil || ltv.LaunchTemplateData.ImageId == nil {
+				continue
+			}
+
 			c.used[*ltv.LaunchTemplateData.ImageId] = &Used{
 				ID:   fmt.Sprintf("%s (%d)", *ltv.LaunchTemplateName, *ltv.VersionNumber),
 				Type: "launch template",
