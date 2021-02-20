@@ -3,7 +3,6 @@
 package main
 
 import (
-	awscommon "github.com/hashicorp/packer/builder/amazon/common"
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/template/interpolate"
 )
@@ -11,8 +10,8 @@ import (
 // Config is a post-processor's configuration
 // PostProcessor generates it using Packer's configuration in `Configure()` method
 type Config struct {
-	common.PackerConfig    `mapstructure:",squash"`
-	awscommon.AccessConfig `mapstructure:",squash"`
+	common.PackerConfig `mapstructure:",squash"`
+	AccessConfig        `mapstructure:",squash"`
 
 	Identifier   string   `mapstructure:"identifier"`
 	KeepReleases int      `mapstructure:"keep_releases"`

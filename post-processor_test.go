@@ -51,7 +51,6 @@ func TestPostProcessor_Configure_validConfigWithKeepDays(t *testing.T) {
 func TestPostProcessor_Configure_missingRegions(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
-		"region":        "us-east-1",
 		"identifier":    "packer-example",
 		"keep_releases": 3,
 	})
