@@ -10,7 +10,4 @@ install: build
 	mkdir -p ~/.packer.d/plugins
 	install ./packer-post-processor-amazon-ami-management ~/.packer.d/plugins/
 
-mock:
-	go generate ./...
-
 .PHONY: default test build install

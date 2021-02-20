@@ -8,7 +8,6 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/hcl/v2/hcldec"
-	awscommon "github.com/hashicorp/packer/builder/amazon/common"
 	"github.com/hashicorp/packer/helper/config"
 	"github.com/hashicorp/packer/packer"
 	"github.com/hashicorp/packer/template/interpolate"
@@ -31,7 +30,6 @@ func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec {
 
 // Configure generates post-processor's configuration
 func (p *PostProcessor) Configure(raws ...interface{}) error {
-	p.config.ctx.Funcs = awscommon.TemplateFuncs
 	err := config.Decode(&p.config, &config.DecodeOpts{
 		Interpolate:        true,
 		InterpolateContext: &p.config.ctx,
