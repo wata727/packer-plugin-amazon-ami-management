@@ -1,6 +1,6 @@
 // @see https://github.com/hashicorp/packer/blob/v1.6.4/builder/amazon/common/access_config.go
 
-package main
+package amimanagement
 
 import (
 	"fmt"

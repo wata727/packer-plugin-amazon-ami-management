@@ -1,6 +1,6 @@
 //go:generate mapstructure-to-hcl2 -type Config
 
-package main
+package amimanagement
 
 import (
 	"github.com/hashicorp/packer-plugin-sdk/common"

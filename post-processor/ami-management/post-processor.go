@@ -1,4 +1,4 @@
-package main
+package amimanagement
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 )
 
-//go:generate mockgen -destination ec2iface_mock.go -package main github.com/aws/aws-sdk-go/service/ec2/ec2iface EC2API
+//go:generate mockgen -destination ec2iface_mock.go -package amimanagement github.com/aws/aws-sdk-go/service/ec2/ec2iface EC2API
 
 // PostProcessor is the core of this library
 // Packer performs `PostProcess()` method of this processor
@@ -31,6 +31,7 @@ func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec {
 // Configure generates post-processor's configuration
 func (p *PostProcessor) Configure(raws ...interface{}) error {
 	err := config.Decode(&p.config, &config.DecodeOpts{
+		PluginType:         "packer.post-processor.amazon-ami-management",
 		Interpolate:        true,
 		InterpolateContext: &p.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{

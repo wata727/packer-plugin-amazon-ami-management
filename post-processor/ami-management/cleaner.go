@@ -1,4 +1,4 @@
-package main
+package amimanagement
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 )
 
-//go:generate mockgen -source cleaner.go -destination cleaner_mock.go -package main
+//go:generate mockgen -source cleaner.go -destination cleaner_mock.go -package amimanagement
 
 // AbstractCleaner is an interface of Cleaner
 type AbstractCleaner interface {
