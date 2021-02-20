@@ -31,6 +31,7 @@ func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec {
 // Configure generates post-processor's configuration
 func (p *PostProcessor) Configure(raws ...interface{}) error {
 	err := config.Decode(&p.config, &config.DecodeOpts{
+		PluginType:         "packer.post-processor.amazon-ami-management",
 		Interpolate:        true,
 		InterpolateContext: &p.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
