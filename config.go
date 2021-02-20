@@ -3,8 +3,8 @@
 package main
 
 import (
-	"github.com/hashicorp/packer/common"
-	"github.com/hashicorp/packer/template/interpolate"
+	"github.com/hashicorp/packer-plugin-sdk/common"
+	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 )
 
 // Config is a post-processor's configuration
