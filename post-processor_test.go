@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/golang/mock/gomock"
-	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
 )
 
 func testUI() *packer.BasicUi {
