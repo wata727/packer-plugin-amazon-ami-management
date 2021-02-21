@@ -14,7 +14,7 @@ Packer >= v1.7.0 supports third-party plugin installation by `init` command. You
 ```hcl
 packer {
   required_plugins {
-    amazon_ami_management = {
+    amazon-ami-management = {
       version = ">= 1.0.0"
       source = "github.com/wata727/amazon-ami-management"
     }
