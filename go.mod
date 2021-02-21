@@ -1,4 +1,4 @@
-module github.com/wata727/packer-post-processor-amazon-ami-management
+module github.com/wata727/packer-plugin-amazon-ami-management
 
 go 1.15
 
