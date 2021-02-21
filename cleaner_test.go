@@ -18,7 +18,7 @@ func TestCleaner_RetrieveCandidateImages_KeepReleases(t *testing.T) {
 
 	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{
-			&ec2.Filter{
+			{
 				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
 				Values: []*string{
 					aws.String("packer-example"),
@@ -26,20 +26,20 @@ func TestCleaner_RetrieveCandidateImages_KeepReleases(t *testing.T) {
 			},
 		},
 	}).Return(&ec2.DescribeImagesOutput{
-		Images: []*ec2.Image{&ec2.Image{
+		Images: []*ec2.Image{{
 			ImageId:      aws.String("ami-12345a"),
 			CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
-		}, &ec2.Image{
+		}, {
 			ImageId:      aws.String("ami-12345b"),
 			CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
-		}, &ec2.Image{
+		}, {
 			ImageId:      aws.String("ami-12345c"),
 			CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-			BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+			BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
 				Ebs: &ec2.EbsBlockDevice{
 					SnapshotId: aws.String("snap-12345a"),
 				},
-			}, &ec2.BlockDeviceMapping{
+			}, {
 				Ebs: &ec2.EbsBlockDevice{
 					SnapshotId: aws.String("snap-12345b"),
 				},
@@ -75,7 +75,7 @@ func TestCleaner_RetrieveCandidateImages_KeepDays(t *testing.T) {
 
 	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{
-			&ec2.Filter{
+			{
 				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
 				Values: []*string{
 					aws.String("packer-example"),
@@ -83,20 +83,20 @@ func TestCleaner_RetrieveCandidateImages_KeepDays(t *testing.T) {
 			},
 		},
 	}).Return(&ec2.DescribeImagesOutput{
-		Images: []*ec2.Image{&ec2.Image{
+		Images: []*ec2.Image{{
 			ImageId:      aws.String("ami-12345a"),
 			CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
-		}, &ec2.Image{
+		}, {
 			ImageId:      aws.String("ami-12345b"),
 			CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
-		}, &ec2.Image{
+		}, {
 			ImageId:      aws.String("ami-12345c"),
 			CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-			BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+			BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
 				Ebs: &ec2.EbsBlockDevice{
 					SnapshotId: aws.String("snap-12345a"),
 				},
-			}, &ec2.BlockDeviceMapping{
+			}, {
 				Ebs: &ec2.EbsBlockDevice{
 					SnapshotId: aws.String("snap-12345b"),
 				},
@@ -150,11 +150,11 @@ func TestCleaner_DeleteImage(t *testing.T) {
 	err := cleaner.DeleteImage(&ec2.Image{
 		ImageId:      aws.String("ami-12345c"),
 		CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-		BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+		BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
 			Ebs: &ec2.EbsBlockDevice{
 				SnapshotId: aws.String("snap-12345a"),
 			},
-		}, &ec2.BlockDeviceMapping{
+		}, {
 			Ebs: &ec2.EbsBlockDevice{
 				SnapshotId: aws.String("snap-12345b"),
 			},
@@ -186,13 +186,13 @@ func TestCleaner_DeleteImage_EphemeralDevise(t *testing.T) {
 	err := cleaner.DeleteImage(&ec2.Image{
 		ImageId:      aws.String("ami-12345c"),
 		CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-		BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+		BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
 			Ebs: &ec2.EbsBlockDevice{
 				SnapshotId: aws.String("snap-12345a"),
 			},
-		}, &ec2.BlockDeviceMapping{
+		}, {
 			Ebs: nil,
-		}, &ec2.BlockDeviceMapping{
+		}, {
 			Ebs: nil,
 		}},
 	})
@@ -233,7 +233,7 @@ func TestCleaner_DeleteImage_DryRun(t *testing.T) {
 	err := cleaner.DeleteImage(&ec2.Image{
 		ImageId:      aws.String("ami-12345a"),
 		CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-		BlockDeviceMappings: []*ec2.BlockDeviceMapping{&ec2.BlockDeviceMapping{
+		BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
 			Ebs: &ec2.EbsBlockDevice{
 				SnapshotId: aws.String("snap-12345a"),
 			},

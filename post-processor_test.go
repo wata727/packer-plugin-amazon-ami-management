@@ -149,8 +149,8 @@ func TestPostProcessor_PostProcess(t *testing.T) {
 
 	cleanermock.EXPECT().RetrieveCandidateImages().Return(
 		[]*ec2.Image{
-			&ec2.Image{ImageId: aws.String("ami-12345a")},
-			&ec2.Image{ImageId: aws.String("ami-12345b")},
+			{ImageId: aws.String("ami-12345a")},
+			{ImageId: aws.String("ami-12345b")},
 		},
 		nil,
 	)
