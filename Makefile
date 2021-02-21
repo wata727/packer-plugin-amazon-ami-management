@@ -8,6 +8,6 @@ build: test
 
 install: build
 	mkdir -p ~/.packer.d/plugins
-	install ./packer-post-processor-amazon-ami-management ~/.packer.d/plugins/
+	mv ./packer-plugin-amazon-ami-management ~/.packer.d/plugins/
 
 .PHONY: default test build install

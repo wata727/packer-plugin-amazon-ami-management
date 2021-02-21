@@ -1,64 +1,31 @@
-# packer-post-processor-amazon-ami-management
-[![Build Status](https://github.com/wata727/packer-post-processor-amazon-ami-management/workflows/build/badge.svg?branch=master)](https://github.com/wata727/packer-post-processor-amazon-ami-management/actions)
-[![GitHub release](https://img.shields.io/github/release/wata727/packer-post-processor-amazon-ami-management.svg)](https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/latest)
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+# packer-plugin-amazon-ami-management
+[![Build Status](https://github.com/wata727/packer-plugin-amazon-ami-management/workflows/build/badge.svg?branch=master)](https://github.com/wata727/packer-plugin-amazon-ami-management/actions)
+[![GitHub release](https://img.shields.io/github/release/wata727/packer-plugin-amazon-ami-management.svg)](https://github.com/wata727/packer-plugin-amazon-ami-management/releases/latest)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-blue.svg)](LICENSE)
 
-Packer post-processor plugin for AMI management
+Packer post-processor plugin for Amazon AMI management
 
 ## Description
-This post-processor cleanups old AMIs and EBS snapshots using `amazon-ebs` builder's access configuration after baking a new AMI.
+This post-processor cleanups old AMIs and EBS snapshots after baking a new AMI.
 
 ## Installation
-Packer supports plugin system. Please read the following documentation:
+Packer >= v1.7.0 supports third-party plugin installation by `init` command. You can install the plugin automatically after adding the `required_plugin` block.
 
-https://www.packer.io/docs/extend/plugins.html
-
-You can download binary built for your architecture from [latest releases](https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/latest).
-
-For example, to install v0.9.0 for 64bit OSX
-
-For Linux based OS, you can use the install_linux.sh to automate the installation process
-
-```sh
-mkdir -p ~/.packer.d/plugins
-wget https://github.com/wata727/packer-post-processor-amazon-ami-management/releases/download/v0.9.0/packer-post-processor-amazon-ami-management_0.9.0_darwin_amd64.zip -P /tmp/
-cd ~/.packer.d/plugins
-unzip -j /tmp/packer-post-processor-amazon-ami-management_0.9.0_darwin_amd64.zip -d ~/.packer.d/plugins
-```
-
-## Usage
-The following example is a template to keep only the latest 3 AMIs.
-
-```json
-{
-  "builders": [{
-    "type": "amazon-ebs",
-    "region": "us-east-1",
-    "source_ami": "ami-6869aa05",
-    "instance_type": "t2.micro",
-    "ssh_username": "ec2-user",
-    "ssh_pty": "true",
-    "ami_name": "packer-example {{timestamp}}",
-    "tags": {
-        "Amazon_AMI_Management_Identifier": "packer-example"
+```hcl
+packer {
+  required_plugins {
+    amazon_ami_management = {
+      version = ">= 1.0.0"
+      source = "github.com/wata727/amazon-ami-management"
     }
-  }],
-  "provisioners":[{
-    "type": "shell",
-    "inline": [
-      "echo 'running...'"
-    ]
-  }],
-  "post-processors":[{
-    "type": "amazon-ami-management",
-    "regions": ["us-east-1"],
-    "identifier": "packer-example",
-    "keep_releases": "3"
-  }]
+  }
 }
 ```
 
-The following is example in HCL2 (after Packer v1.5.0):
+See the [Packer documentation](https://www.packer.io/docs/plugins#installing-plugins) for more details.
+
+## Usage
+The following example is a template to keep only the latest 3 AMIs.
 
 ```hcl
 source "amazon-ebs" "example" {

@@ -33,5 +33,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@master
       with:
-        name: packer-post-processor-amazon-ami-management
-        path: packer-post-processor-amazon-ami-management
+        name: packer-plugin-amazon-ami-management
+        path: packer-plugin-amazon-ami-management

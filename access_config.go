@@ -127,7 +127,7 @@ func IsAWSErr(err error, code string, message string) bool {
 // NewNoValidCredentialSourcesError returns user-friendly errors for authentication failed.
 func (c *AccessConfig) NewNoValidCredentialSourcesError(err error) error {
 	return fmt.Errorf("No valid credential sources found for amazon-ami-management post processor. "+
-		"Please see https://github.com/wata727/packer-post-processor-amazon-ami-management "+
+		"Please see https://github.com/wata727/packer-plugin-amazon-ami-management "+
 		"for more information on providing credentials for the post processor. "+
 		"Error: %w", err)
 }
