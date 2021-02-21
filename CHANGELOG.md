@@ -1,3 +1,40 @@
+## v1.0.0 (2021-02-22)
+
+This release contains some major changes for Packer v1.7 support. If you want to use Packer < v1.7, please use v0.x versions.
+
+### Breaking Changes
+
+- [#165](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/165): Remove the AWS builder dependency
+  - `clean_resource_name` function support was removed from the post-processor attributes.
+  - Undocumented AWS access config attributes were removed.
+    - `assume_role`
+    - `shared_credentials_file`
+    - `decode_authorization_messages`
+    - `insecure_skip_tls_verify`
+    - `max_retries`
+    - `region`
+    - `skip_credential_validation`
+    - `vault_aws_engine`
+    - `aws_polling`
+- [#166](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/166): Change license: MIT -> MPL 2.0
+  - Changed to meet licensing requirements due to porting code from Packer core.
+- [#167](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/167): Upgrade the plugin to be compatible with Packer v1.7
+  - Drop support for Packer < v1.7
+- [#169](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/169) [#171](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/171): Make the plugin multi component plugin
+  - Support automatic installation by `packer init`.
+  - Rename to `packer-plugin-amazon-ami-management` from `packer-post-processor-amazon-ami-management`.
+  - Drop pre-built binary support for netbsd/openbsd.
+  - Add pre-built binary support for arm64.
+
+### Chores
+
+- [#139](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/139): Bump actions/checkout from v2.3.3 to v2.3.4
+- [#152](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/152): Bump github.com/zclconf/go-cty from 1.6.1 to 1.7.1
+- [#156](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/156): Bump github.com/hashicorp/hcl/v2 from 2.7.0 to 2.8.2
+- [#160](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/160): Bump actions/cache from v2.1.2 to v2.1.4
+- [#170](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/170): Bump github.com/aws/aws-sdk-go from v1.36.5 to 1.37.15
+- [#172](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/172): Small refactoring
+
 ## v0.9.0 (2020-10-17)
 
 ### Changes
