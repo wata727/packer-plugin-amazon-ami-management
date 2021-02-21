@@ -19,7 +19,7 @@ import (
 // Packer performs `PostProcess()` method of this processor
 type PostProcessor struct {
 	testMode bool
-	cleaner  AbstractCleaner
+	cleaner  Cleanable
 	config   Config
 }
 

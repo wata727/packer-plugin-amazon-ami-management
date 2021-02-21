@@ -17,8 +17,8 @@ import (
 
 //go:generate mockgen -source cleaner.go -destination cleaner_mock.go -package main
 
-// AbstractCleaner is an interface of Cleaner
-type AbstractCleaner interface {
+// Cleanable is an interface of Cleaner
+type Cleanable interface {
 	RetrieveCandidateImages() ([]*ec2.Image, error)
 	DeleteImage(*ec2.Image) error
 	IsUsed(*ec2.Image) *Used

@@ -145,12 +145,12 @@ func TestPostProcessor_Configure_NeitherKeepReleasesNorKeepDaysIsSet(t *testing.
 func TestPostProcessor_PostProcess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	cleanermock := NewMockAbstractCleaner(ctrl)
+	cleanermock := NewMockCleanable(ctrl)
 
 	cleanermock.EXPECT().RetrieveCandidateImages().Return(
 		[]*ec2.Image{
-			&ec2.Image{ImageId: aws.String("ami-12345a")},
-			&ec2.Image{ImageId: aws.String("ami-12345b")},
+			{ImageId: aws.String("ami-12345a")},
+			{ImageId: aws.String("ami-12345b")},
 		},
 		nil,
 	)
