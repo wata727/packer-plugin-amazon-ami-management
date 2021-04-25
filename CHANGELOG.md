@@ -1,3 +1,7 @@
+## v1.1.2 (2021-04-25)
+
+- [#184](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/184): build: Fix installation command for Go 1.16 style
+
 ## v1.1.1 (2021-04-25)
 
 - [#183](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/183): build: Fix Go version in release action
