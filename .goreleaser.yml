@@ -9,7 +9,7 @@ builds:
       post:
         # This will check plugin compatibility against latest version of Packer
         - cmd: |
-            go install github.com/hashicorp/packer/cmd/packer-plugins-check &&
+            go install github.com/hashicorp/packer/cmd/packer-plugins-check@latest &&
             packer-plugins-check -load={{ .Name }}
           dir: "{{ dir .Path}}"
     flags:
