@@ -16,7 +16,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2.1.3
       with:
-        version: 1.16
+        go-version: 1.16
     - name: Describe plugin
       id: plugin_describe
       run: echo "::set-output name=api_version::$(go run . describe | jq -r '.api_version')"
