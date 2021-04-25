@@ -1,3 +1,21 @@
+## v1.1.0 (2021-04-25)
+
+### Changes
+
+- [#174](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/174): Upgrade to Go 1.16
+  - darwin/arm64 is now available. See also https://golang.org/doc/go1.16
+
+### Chores
+
+- [#173](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/173): Remove support for the installation script
+- [#175](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/175): Bump actions/cache from v2.1.4 to v2.1.5
+- [#176](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/176): Bump github.com/hashicorp/packer-plugin-sdk from 0.1.0 to 0.2.0
+- [#178](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/178): Bump github.com/hashicorp/hcl/v2 from 2.9.1 to 2.10.0
+- [#179](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/179): Bump github.com/golang/mock from 1.4.4 to 1.5.0
+- [#180](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/180): Bump github.com/hashicorp/aws-sdk-go-base from 0.6.0 to 0.7.1
+- [#181](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/181): Bump github.com/aws/aws-sdk-go from 1.38.0 to 1.38.25
+- [#182](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/182): Bump github.com/zclconf/go-cty from 1.8.1 to 1.8.2
+
 ## v1.0.0 (2021-02-22)
 
 This release contains some major changes for Packer v1.7 support. If you want to use Packer < v1.7, please use v0.x versions.
