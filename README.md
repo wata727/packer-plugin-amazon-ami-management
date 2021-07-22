@@ -72,12 +72,12 @@ The following attibutes are also available. These are optional and used in the s
 
 - `access_key`
 - `secret_key`
-- `profile`
-- `token`
-- `mfa_code`
+- `assume_role`
 - `custom_endpoint_ec2`
-- `skip_region_validation`
+- `mfa_code`
+- `profile`
 - `skip_metadata_api_check`
+- `token`
 
 ### IAM Task or Instance Role
 
