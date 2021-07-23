@@ -1,4 +1,4 @@
-// @see https://github.com/hashicorp/packer/blob/v1.6.4/builder/amazon/common/access_config.go
+// @see https://github.com/hashicorp/packer-plugin-amazon/blob/v1.0.0/builder/common/access_config.go
 
 package main
 
@@ -16,16 +16,32 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 )
 
+// AssumeRoleConfig lets users set configuration options for assuming a special
+// role when executing this plugin.
+type AssumeRoleConfig struct {
+	AssumeRoleARN               string            `mapstructure:"role_arn" required:"false"`
+	AssumeRoleDurationSeconds   int               `mapstructure:"duration_seconds" required:"false"`
+	AssumeRoleExternalID        string            `mapstructure:"external_id" required:"false"`
+	AssumeRolePolicy            string            `mapstructure:"policy" required:"false"`
+	AssumeRolePolicyARNs        []string          `mapstructure:"policy_arns" required:"false"`
+	AssumeRoleSessionName       string            `mapstructure:"session_name" required:"false"`
+	AssumeRoleTags              map[string]string `mapstructure:"tags" required:"false"`
+	AssumeRoleTransitiveTagKeys []string          `mapstructure:"transitive_tag_keys" required:"false"`
+}
+
 // AccessConfig is for common configuration related to AWS access
 type AccessConfig struct {
-	AccessKey            string `mapstructure:"access_key"`
-	SecretKey            string `mapstructure:"secret_key"`
-	ProfileName          string `mapstructure:"profile"`
-	Token                string `mapstructure:"token"`
-	MFACode              string `mapstructure:"mfa_code"`
-	CustomEndpointEc2    string `mapstructure:"custom_endpoint_ec2"`
-	SkipValidation       bool   `mapstructure:"skip_region_validation"`
-	SkipMetadataAPICheck bool   `mapstructure:"skip_metadata_api_check"`
+	AccessKey            string           `mapstructure:"access_key"`
+	AssumeRole           AssumeRoleConfig `mapstructure:"assume_role" required:"false"`
+	CustomEndpointEc2    string           `mapstructure:"custom_endpoint_ec2"`
+	MFACode              string           `mapstructure:"mfa_code"`
+	ProfileName          string           `mapstructure:"profile"`
+	SecretKey            string           `mapstructure:"secret_key"`
+	SkipMetadataAPICheck bool             `mapstructure:"skip_metadata_api_check"`
+	Token                string           `mapstructure:"token"`
+
+	// SkipValidation is not used, but it is still a valid option to keep backward compatibility.
+	SkipValidation bool `mapstructure:"skip_region_validation"`
 
 	session *session.Session
 }
@@ -102,12 +118,20 @@ func (c *AccessConfig) Session() (*session.Session, error) {
 func (c *AccessConfig) GetCredentials(config *aws.Config) (*awsCredentials.Credentials, error) {
 	// Reload values into the config used by the Packer-Terraform shared SDK
 	awsbaseConfig := &awsbase.Config{
-		AccessKey:            c.AccessKey,
-		DebugLogging:         false,
-		Profile:              c.ProfileName,
-		SecretKey:            c.SecretKey,
-		SkipMetadataApiCheck: c.SkipMetadataAPICheck,
-		Token:                c.Token,
+		AccessKey:                   c.AccessKey,
+		AssumeRoleARN:               c.AssumeRole.AssumeRoleARN,
+		AssumeRoleDurationSeconds:   c.AssumeRole.AssumeRoleDurationSeconds,
+		AssumeRoleExternalID:        c.AssumeRole.AssumeRoleExternalID,
+		AssumeRolePolicy:            c.AssumeRole.AssumeRolePolicy,
+		AssumeRolePolicyARNs:        c.AssumeRole.AssumeRolePolicyARNs,
+		AssumeRoleSessionName:       c.AssumeRole.AssumeRoleSessionName,
+		AssumeRoleTags:              c.AssumeRole.AssumeRoleTags,
+		AssumeRoleTransitiveTagKeys: c.AssumeRole.AssumeRoleTransitiveTagKeys,
+		DebugLogging:                false,
+		Profile:                     c.ProfileName,
+		SecretKey:                   c.SecretKey,
+		SkipMetadataApiCheck:        c.SkipMetadataAPICheck,
+		Token:                       c.Token,
 	}
 
 	return awsbase.GetCredentials(awsbaseConfig)
