@@ -1,3 +1,17 @@
+## v1.2.0 (2021-07-23)
+
+### Enhancements
+
+- [#207](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/207): Add support for `assume_role` access config
+
+### Chores
+
+- [#192](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/192): Bump actions/cache from 2.1.5 to 2.1.6
+- [#196](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/196): Bump github.com/hashicorp/packer-plugin-sdk from 0.2.0 to 0.2.3
+- [#197](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/197): Bump github.com/golang/mock from 1.5.0 to 1.6.0
+- [#203](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/203): Bump github.com/zclconf/go-cty from 1.8.2 to 1.9.0
+- [#206](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/206): Bump github.com/aws/aws-sdk-go from 1.38.25 to 1.40.5
+
 ## v1.1.2 (2021-04-25)
 
 - [#184](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/184): build: Fix installation command for Go 1.16 style
