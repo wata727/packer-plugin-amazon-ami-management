@@ -1,3 +1,19 @@
+## v1.3.0 (2023-01-05)
+
+### Enhancements
+
+- [#259](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/259): Bump github.com/hashicorp/aws-sdk-go-base from 0.7.1 to 1.1.0
+- [#315](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/315): Bump github.com/hashicorp/packer-plugin-sdk from 0.2.3 to 0.3.2
+- [#350](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/350): Bump aws-sdk-go
+
+### Chores
+
+- [#331](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/331): Bump github.com/hashicorp/hcl/v2 from 2.10.0 to 2.13.0
+- [#341](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/341): Bump goreleaser/goreleaser-action from 2 to 4
+- [#349](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/349): Upgrade to Go 1.19
+- [#351](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/351): Improve build workflows
+- [#352](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/352): Add goreleaser check workflow
+
 ## v1.2.0 (2021-07-23)
 
 ### Enhancements
