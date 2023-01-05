@@ -20,7 +20,7 @@ jobs:
         cache: true
     - name: Describe plugin
       id: plugin_describe
-      run: echo "::set-output name=api_version::$(go run . describe | jq -r '.api_version')"
+      run: echo "api_version=$(go run . describe | jq -r '.api_version')" >> $GITHUB_OUTPUT
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v4
       with:
