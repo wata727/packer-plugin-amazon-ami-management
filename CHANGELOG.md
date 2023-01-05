@@ -1,3 +1,7 @@
+## v1.3.1 (2023-01-05)
+
+- [#353](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/353): Fix release workflow
+
 ## v1.3.0 (2023-01-05)
 
 ### Enhancements
