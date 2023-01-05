@@ -1,5 +1,7 @@
 default: build
 
+NAME=amazon-ami-management
+BINARY=packer-plugin-${NAME}
 MOCK_VERSION?=$(shell go list -m github.com/golang/mock | cut -d " " -f2)
 SDK_VERSION?=$(shell go list -m github.com/hashicorp/packer-plugin-sdk | cut -d " " -f2)
 
@@ -20,4 +22,7 @@ install: build
 	mkdir -p ~/.packer.d/plugins
 	mv ./packer-plugin-amazon-ami-management ~/.packer.d/plugins/
 
-.PHONY: default deps test build install
+plugin-check: deps build
+	packer-sdc plugin-check ${BINARY}
+
+.PHONY: default deps generate test build install plugin-check
