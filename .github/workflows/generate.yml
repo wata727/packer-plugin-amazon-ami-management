@@ -1,0 +1,20 @@
+name: generate
+
+on: pull_request
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version-file: 'go.mod'
+        cache: true
+    - run: make generate
+    - run: git add --intent-to-add .
+    - run: git diff --exit-code
