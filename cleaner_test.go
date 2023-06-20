@@ -50,7 +50,9 @@ func TestCleaner_RetrieveCandidateImages_KeepReleases(t *testing.T) {
 	cleaner := &Cleaner{
 		ec2conn: ec2mock,
 		config: Config{
-			Identifier:   "packer-example",
+			Tags: map[string]string{
+				"Amazon_AMI_Management_Identifier": "packer-example",
+			},
 			KeepReleases: 2,
 		},
 		now: time.Now().UTC(),
@@ -107,8 +109,10 @@ func TestCleaner_RetrieveCandidateImages_KeepDays(t *testing.T) {
 	cleaner := &Cleaner{
 		ec2conn: ec2mock,
 		config: Config{
-			Identifier: "packer-example",
-			KeepDays:   10,
+			Tags: map[string]string{
+				"Amazon_AMI_Management_Identifier": "packer-example",
+			},
+			KeepDays: 10,
 		},
 		now: time.Date(2016, time.August, 11, 11, 0, 0, 0, time.UTC),
 	}

@@ -64,11 +64,11 @@ type FlatConfig struct {
 	SkipMetadataAPICheck *bool                 `mapstructure:"skip_metadata_api_check" cty:"skip_metadata_api_check" hcl:"skip_metadata_api_check"`
 	Token                *string               `mapstructure:"token" cty:"token" hcl:"token"`
 	SkipValidation       *bool                 `mapstructure:"skip_region_validation" cty:"skip_region_validation" hcl:"skip_region_validation"`
-	Identifier           *string               `mapstructure:"identifier" cty:"identifier" hcl:"identifier"`
 	KeepReleases         *int                  `mapstructure:"keep_releases" cty:"keep_releases" hcl:"keep_releases"`
 	KeepDays             *int                  `mapstructure:"keep_days" cty:"keep_days" hcl:"keep_days"`
 	Regions              []string              `mapstructure:"regions" cty:"regions" hcl:"regions"`
 	DryRun               *bool                 `mapstructure:"dry_run" cty:"dry_run" hcl:"dry_run"`
+	Tags                 map[string]string     `mapstructure:"tags" cty:"tags" hcl:"tags"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -100,11 +100,11 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"skip_metadata_api_check":    &hcldec.AttrSpec{Name: "skip_metadata_api_check", Type: cty.Bool, Required: false},
 		"token":                      &hcldec.AttrSpec{Name: "token", Type: cty.String, Required: false},
 		"skip_region_validation":     &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
-		"identifier":                 &hcldec.AttrSpec{Name: "identifier", Type: cty.String, Required: false},
 		"keep_releases":              &hcldec.AttrSpec{Name: "keep_releases", Type: cty.Number, Required: false},
 		"keep_days":                  &hcldec.AttrSpec{Name: "keep_days", Type: cty.Number, Required: false},
 		"regions":                    &hcldec.AttrSpec{Name: "regions", Type: cty.List(cty.String), Required: false},
 		"dry_run":                    &hcldec.AttrSpec{Name: "dry_run", Type: cty.Bool, Required: false},
+		"tags":                       &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},
 	}
 	return s
 }

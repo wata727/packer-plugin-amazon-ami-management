@@ -26,8 +26,10 @@ func TestPostProcessor_Configure_validConfigWithKeepReleases(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
 		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
 		"keep_releases": 3,
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err != nil {
@@ -38,9 +40,11 @@ func TestPostProcessor_Configure_validConfigWithKeepReleases(t *testing.T) {
 func TestPostProcessor_Configure_validConfigWithKeepDays(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
-		"keep_days":  10,
+		"regions":   []string{"us-east-1"},
+		"keep_days": 10,
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err != nil {
@@ -51,7 +55,9 @@ func TestPostProcessor_Configure_validConfigWithKeepDays(t *testing.T) {
 func TestPostProcessor_Configure_missingRegions(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
-		"identifier":    "packer-example",
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 		"keep_releases": 3,
 	})
 
@@ -73,7 +79,7 @@ func TestPostProcessor_Configure_emptyIdentifier(t *testing.T) {
 	if err == nil {
 		t.Fatal("should cause validation errors")
 	}
-	if err.Error() != "empty `identifier` is not allowed. Please make sure that it is set correctly" {
+	if err.Error() != "empty `tags` is not allowed. Please make sure that it is set correctly" {
 		t.Fatalf("Unexpected error occurred: %s", err)
 	}
 }
@@ -82,8 +88,10 @@ func TestPostProcessor_Configure_invalidKeepReleases(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
 		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
 		"keep_releases": -1,
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err == nil {
@@ -97,9 +105,11 @@ func TestPostProcessor_Configure_invalidKeepReleases(t *testing.T) {
 func TestPostProcessor_Configure_invalidKeepDays(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
-		"keep_days":  -1,
+		"regions":   []string{"us-east-1"},
+		"keep_days": -1,
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err == nil {
@@ -114,9 +124,11 @@ func TestPostProcessor_Configure_setKeepReleasesAndKeepDays(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
 		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
 		"keep_releases": 3,
 		"keep_days":     10,
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err == nil {
@@ -130,8 +142,10 @@ func TestPostProcessor_Configure_setKeepReleasesAndKeepDays(t *testing.T) {
 func TestPostProcessor_Configure_NeitherKeepReleasesNorKeepDaysIsSet(t *testing.T) {
 	p := new(PostProcessor)
 	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
+		"regions": []string{"us-east-1"},
+		"tags": map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		},
 	})
 
 	if err == nil {
