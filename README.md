@@ -29,12 +29,45 @@ See the [Packer documentation](https://www.packer.io/docs/plugins#installing-plu
 
 ## Usage
 
-The following example is a template to keep only the latest 3 AMIs.
+The following examples is a templates to keep only the latest 3 AMIs.
+
+### An example with defined option `identifier`
+
+```hcl
+source "amazon-ebs" "example" {
+  region        = "us-east-1"
+  source_ami    = "ami-6869aa05"
+  instance_type = "t2.micro"
+  ssh_username  = "ec2-user"
+  ssh_pty       = true
+  ami_name      = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  tags = {
+    Amazon_AMI_Management_Identifier = "packer-example"
+  }
+}
+
+build {
+  sources = ["source.amazon-ebs.example"]
+
+  provisioner "shell" {
+    inline = ["echo 'running...'"]
+  }
+
+  post-processor "amazon-ami-management" {
+    regions       = ["us-east-1"]
+    identifier    = "packer-example"
+    keep_releases = 3
+  }
+}
+```
+
+### An example with defined option `tags`
 
 ```hcl
 locals {
   tags = {
-    Amazon_AMI_Management_Identifier = "packer-example"
+    version    = 1.23
+    department = "dev"
   }
 }
 
@@ -69,7 +102,8 @@ Type: `amazon-ami-management`
 
 Required:
 
-- `tags` (map of strings) - The tags to indetify AMI. This plugin uses search by `tags`. If `tags` matches `AMI` tags, these AMI becomes to management target.
+- `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
+- `tags` (map of strings) - The tags to indetify AMI. This plugin uses search by `tags`. If `tags` matches `AMI` tags, these AMI becomes to management target. If `identifier` is set, this parameter is ignored.
 - `keep_releases` (integer) - The number of AMIs. This value is invalid when `keep_days` is set.
 - `keep_days` (integer) - The number of days to keep AMIs. For example, if you specify `10`, AMIs created before 10 days will be deleted. This value is invalid when `keep_releases` is set.
 - `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.

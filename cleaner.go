@@ -236,13 +236,22 @@ func (c *Cleaner) genTagsFilter() []*ec2.Filter {
 	var (
 		filters []*ec2.Filter
 	)
-	for k, v := range c.config.Tags {
+	if c.config.Identifier != "" {
 		filters = append(filters, &ec2.Filter{
-			Name: aws.String(fmt.Sprintf("tag:%s", k)),
+			Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
 			Values: []*string{
-				aws.String(v),
+				aws.String(c.config.Identifier),
 			},
 		})
+	} else {
+		for k, v := range c.config.Tags {
+			filters = append(filters, &ec2.Filter{
+				Name: aws.String(fmt.Sprintf("tag:%s", k)),
+				Values: []*string{
+					aws.String(v),
+				},
+			})
+		}
 	}
 	return filters
 }

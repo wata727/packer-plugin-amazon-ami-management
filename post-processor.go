@@ -42,8 +42,11 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		return err
 	}
 
-	if len(p.config.Tags) == 0 {
-		return errors.New("empty `tags` is not allowed. Please make sure that it is set correctly")
+	if len(p.config.Tags) == 0 && p.config.Identifier == "" {
+		return errors.New("`identifier` or `tags` must be defined. Please make sure that it is set correctly")
+	}
+	if len(p.config.Tags) > 0 && p.config.Identifier != "" {
+		log.Println("[WARNING] `tags` is ignored because `identifier` is defined")
 	}
 	if p.config.KeepReleases != 0 && p.config.KeepDays != 0 {
 		return errors.New("`keep_releases` and `keep_days` cannot be set as the same time")
