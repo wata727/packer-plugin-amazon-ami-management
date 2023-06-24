@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/aws-sdk-go-base v1.1.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/hcl/v2 v2.13.0
-	github.com/hashicorp/packer-plugin-sdk v0.3.2
+	github.com/hashicorp/packer-plugin-sdk v0.4.0
 	github.com/zclconf/go-cty v1.10.0
 )
 
@@ -31,7 +31,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
-	github.com/hashicorp/go-version v1.3.0 // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/serf v0.9.5 // indirect
@@ -54,10 +54,9 @@ require (
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167 // indirect
-	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
