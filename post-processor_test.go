@@ -22,127 +22,173 @@ func TestPostProcessor_ImplementsPostProcessor(t *testing.T) {
 	var _ packer.PostProcessor = new(PostProcessor)
 }
 
-func TestPostProcessor_Configure_validConfigWithKeepReleases(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
-		"keep_releases": 3,
-	})
+func TestConfigCases(t *testing.T) {
+	var (
+		defaultRegions    = []string{"us-east-1"}
+		defaultIndentifer = "packer-example"
+		defaultTags       = map[string]string{
+			"Amazon_AMI_Management_Identifier": "packer-example",
+		}
 
-	if err != nil {
-		t.Fatalf("err: %s", err)
-	}
-}
+		configTestCases = []struct {
+			Name           string
+			ExptectedError string
+			Config         map[string]interface{}
+		}{
+			{
+				Name:           "Missing Regions",
+				ExptectedError: "empty `regions` is not allowed. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"identifier":    defaultIndentifer,
+					"keep_releases": 3,
+				},
+			},
+			{
+				Name:           "Missing Regions",
+				ExptectedError: "empty `regions` is not allowed. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"tags":          defaultTags,
+					"keep_releases": 3,
+				},
+			},
+			{
+				Name:           "Invalid KeepReleases",
+				ExptectedError: "`keep_releases` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"identifier":    defaultIndentifer,
+					"keep_releases": -1,
+				},
+			},
+			{
+				Name:           "Invalid KeepReleases",
+				ExptectedError: "`keep_releases` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"tags":          defaultTags,
+					"keep_releases": -1,
+				},
+			},
+			{
+				Name:           "Invalid KeepDays",
+				ExptectedError: "`keep_days` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"regions":    defaultRegions,
+					"identifier": defaultIndentifer,
+					"keep_days":  -1,
+				},
+			},
+			{
+				Name:           "Invalid KeepDays",
+				ExptectedError: "`keep_days` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"regions":   defaultRegions,
+					"tags":      defaultTags,
+					"keep_days": -1,
+				},
+			},
+			{
+				Name:           "Set KeepReleases and KeepDays",
+				ExptectedError: "`keep_releases` and `keep_days` cannot be set as the same time",
+				Config: map[string]interface{}{
+					"regions":       defaultRegions,
+					"identifier":    defaultIndentifer,
+					"keep_releases": 3,
+					"keep_days":     10,
+				},
+			},
+			{
+				Name:           "Set KeepReleases and KeepDays",
+				ExptectedError: "`keep_releases` and `keep_days` cannot be set as the same time",
+				Config: map[string]interface{}{
+					"regions":       defaultRegions,
+					"tags":          defaultTags,
+					"keep_releases": 3,
+					"keep_days":     10,
+				},
+			},
+			{
+				Name:           "Neither KeepReleases nor KeepDays is set",
+				ExptectedError: "`keep_releases` or `keep_days` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"regions":    defaultRegions,
+					"identifier": defaultIndentifer,
+				},
+			},
+			{
+				Name:           "validate config with tags",
+				ExptectedError: "`keep_releases` or `keep_days` must be greater than 1. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"regions": defaultRegions,
+					"tags":    defaultTags,
+				},
+			},
+			{
+				Name:           "Empty Identifier and Tags",
+				ExptectedError: "`identifier` or `tags` must be defined. Please make sure that it is set correctly",
+				Config: map[string]interface{}{
+					"regions":       defaultRegions,
+					"keep_releases": 3,
+				},
+			},
+			{
+				Name: "Configure valid config with KeepDays",
+				Config: map[string]interface{}{
+					"regions":    defaultRegions,
+					"identifier": defaultIndentifer,
+					"keep_days":  10,
+				},
+			},
+			{
+				Name: "Configure valid config with KeepDays",
+				Config: map[string]interface{}{
+					"regions":   defaultRegions,
+					"tags":      defaultTags,
+					"keep_days": 10,
+				},
+			},
+			{
+				Name: "Configure valid config with KeepReleases",
+				Config: map[string]interface{}{
+					"regions":       defaultRegions,
+					"identifier":    defaultIndentifer,
+					"keep_releases": 3,
+				},
+			},
+			{
+				Name: "Configure valid config with KeepReleases",
+				Config: map[string]interface{}{
+					"regions":       defaultRegions,
+					"tags":          defaultTags,
+					"keep_releases": 3,
+				},
+			},
+		}
+	)
 
-func TestPostProcessor_Configure_validConfigWithKeepDays(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
-		"keep_days":  10,
-	})
-
-	if err != nil {
-		t.Fatalf("err: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_missingRegions(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"identifier":    "packer-example",
-		"keep_releases": 3,
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "empty `regions` is not allowed. Please make sure that it is set correctly" {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_emptyIdentifier(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":       []string{"us-east-1"},
-		"keep_releases": 3,
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "empty `identifier` is not allowed. Please make sure that it is set correctly" {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_invalidKeepReleases(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
-		"keep_releases": -1,
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "`keep_releases` must be greater than 1. Please make sure that it is set correctly" {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_invalidKeepDays(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
-		"keep_days":  -1,
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "`keep_days` must be greater than 1. Please make sure that it is set correctly" {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_setKeepReleasesAndKeepDays(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":       []string{"us-east-1"},
-		"identifier":    "packer-example",
-		"keep_releases": 3,
-		"keep_days":     10,
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "`keep_releases` and `keep_days` cannot be set as the same time" {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-}
-
-func TestPostProcessor_Configure_NeitherKeepReleasesNorKeepDaysIsSet(t *testing.T) {
-	p := new(PostProcessor)
-	err := p.Configure(map[string]interface{}{
-		"regions":    []string{"us-east-1"},
-		"identifier": "packer-example",
-	})
-
-	if err == nil {
-		t.Fatal("should cause validation errors")
-	}
-	if err.Error() != "`keep_releases` or `keep_days` must be greater than 1. Please make sure that it is set correctly" {
-		t.Fatalf("Unexpected error occurred: %s", err)
+	for _, c := range configTestCases {
+		t.Run(c.Name, func(t *testing.T) {
+			p := new(PostProcessor)
+			err := p.Configure(c.Config)
+			if c.ExptectedError != "" {
+				if err == nil {
+					t.Fatalf("case: %s should cause validation errors", c.Name)
+				}
+				if err.Error() != c.ExptectedError {
+					t.Fatalf("case: %s unexpected error occurred: %s", err, c.Name)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("case: %s unexpected error occurred: %s", err, c.Name)
+				}
+			}
+		})
 	}
 }
 
 func TestPostProcessor_PostProcess(t *testing.T) {
+	var (
+		defaultRegions = []string{"us-east-1"}
+	)
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	cleanermock := NewMockCleanable(ctrl)
@@ -165,7 +211,7 @@ func TestPostProcessor_PostProcess(t *testing.T) {
 		testMode: true,
 		cleaner:  cleanermock,
 		config: Config{
-			Regions: []string{"us-east-1"},
+			Regions: defaultRegions,
 		},
 	}
 

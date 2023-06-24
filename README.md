@@ -1,4 +1,5 @@
 # packer-plugin-amazon-ami-management
+
 [![Build Status](https://github.com/wata727/packer-plugin-amazon-ami-management/workflows/build/badge.svg?branch=master)](https://github.com/wata727/packer-plugin-amazon-ami-management/actions)
 [![GitHub release](https://img.shields.io/github/release/wata727/packer-plugin-amazon-ami-management.svg)](https://github.com/wata727/packer-plugin-amazon-ami-management/releases/latest)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-blue.svg)](LICENSE)
@@ -6,9 +7,11 @@
 Packer post-processor plugin for Amazon AMI management
 
 ## Description
+
 This post-processor cleanups old AMIs and EBS snapshots after baking a new AMI.
 
 ## Installation
+
 Packer >= v1.7.0 supports third-party plugin installation by `init` command. You can install the plugin automatically after adding the `required_plugin` block.
 
 ```hcl
@@ -25,16 +28,19 @@ packer {
 See the [Packer documentation](https://www.packer.io/docs/plugins#installing-plugins) for more details.
 
 ## Usage
-The following example is a template to keep only the latest 3 AMIs.
+
+The following examples is a templates to keep only the latest 3 AMIs.
+
+### An example with defined option `identifier`
 
 ```hcl
 source "amazon-ebs" "example" {
-  region = "us-east-1"
-  source_ami = "ami-6869aa05"
+  region        = "us-east-1"
+  source_ami    = "ami-6869aa05"
   instance_type = "t2.micro"
-  ssh_username = "ec2-user"
-  ssh_pty = true
-  ami_name = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  ssh_username  = "ec2-user"
+  ssh_pty       = true
+  ami_name      = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
   tags = {
     Amazon_AMI_Management_Identifier = "packer-example"
   }
@@ -48,9 +54,44 @@ build {
   }
 
   post-processor "amazon-ami-management" {
-    regions = ["us-east-1"]
-    identifier = "packer-example"
+    regions       = ["us-east-1"]
+    identifier    = "packer-example"
     keep_releases = 3
+  }
+}
+```
+
+### An example with defined option `tags`
+
+```hcl
+locals {
+  tags = {
+    version    = 1.23
+    department = "dev"
+  }
+}
+
+source "amazon-ebs" "example" {
+  region        = "us-east-1"
+  source_ami    = "ami-6869aa05"
+  instance_type = "t2.micro"
+  ssh_username  = "ec2-user"
+  ssh_pty       = true
+  ami_name      = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  tags          = local.tags
+}
+
+build {
+  sources = ["source.amazon-ebs.example"]
+
+  provisioner "shell" {
+    inline = ["echo 'running...'"]
+  }
+
+  post-processor "amazon-ami-management" {
+    regions       = ["us-east-1"]
+    keep_releases = 3
+    tags          = local.tags
   }
 }
 ```
@@ -60,13 +101,16 @@ build {
 Type: `amazon-ami-management`
 
 Required:
-  - `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
-  - `keep_releases` (integer) - The number of AMIs. This value is invalid when `keep_days` is set.
-  - `keep_days` (integer) - The number of days to keep AMIs. For example, if you specify `10`, AMIs created before 10 days will be deleted. This value is invalid when `keep_releases` is set.
-  - `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
+
+- `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
+- `tags` (map of strings) - The tags to indetify AMI. This plugin uses search by `tags`. If `tags` matches `AMI` tags, these AMI becomes to management target. If `identifier` is set, this parameter is ignored.
+- `keep_releases` (integer) - The number of AMIs. This value is invalid when `keep_days` is set.
+- `keep_days` (integer) - The number of days to keep AMIs. For example, if you specify `10`, AMIs created before 10 days will be deleted. This value is invalid when `keep_releases` is set.
+- `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
 
 Optional:
-  - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
+
+- `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
 The following attibutes are also available. These are optional and used in the same way as AWS Builder:
 

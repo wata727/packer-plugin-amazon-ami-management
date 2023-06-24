@@ -12,116 +12,142 @@ import (
 )
 
 func TestCleaner_RetrieveCandidateImages_KeepReleases(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ec2mock := NewMockEC2API(ctrl)
-
-	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
-		Filters: []*ec2.Filter{
+	var (
+		cfgs = []Config{
 			{
-				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
-				Values: []*string{
-					aws.String("packer-example"),
+				KeepReleases: 2,
+				Tags: map[string]string{
+					"Amazon_AMI_Management_Identifier": "packer-example",
 				},
 			},
-		},
-	}).Return(&ec2.DescribeImagesOutput{
-		Images: []*ec2.Image{{
-			ImageId:      aws.String("ami-12345a"),
-			CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
-		}, {
-			ImageId:      aws.String("ami-12345b"),
-			CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
-		}, {
-			ImageId:      aws.String("ami-12345c"),
-			CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-			BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
-				Ebs: &ec2.EbsBlockDevice{
-					SnapshotId: aws.String("snap-12345a"),
+			{
+				KeepReleases: 2,
+				Identifier:   "packer-example",
+			},
+		}
+	)
+	for _, cfg := range cfgs {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		ec2mock := NewMockEC2API(ctrl)
+
+		ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
+			Filters: []*ec2.Filter{
+				{
+					Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
+					Values: []*string{
+						aws.String("packer-example"),
+					},
 				},
+			},
+		}).Return(&ec2.DescribeImagesOutput{
+			Images: []*ec2.Image{{
+				ImageId:      aws.String("ami-12345a"),
+				CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
 			}, {
-				Ebs: &ec2.EbsBlockDevice{
-					SnapshotId: aws.String("snap-12345b"),
-				},
+				ImageId:      aws.String("ami-12345b"),
+				CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
+			}, {
+				ImageId:      aws.String("ami-12345c"),
+				CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
+				BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
+					Ebs: &ec2.EbsBlockDevice{
+						SnapshotId: aws.String("snap-12345a"),
+					},
+				}, {
+					Ebs: &ec2.EbsBlockDevice{
+						SnapshotId: aws.String("snap-12345b"),
+					},
+				}},
 			}},
-		}},
-	}, nil)
+		}, nil)
 
-	cleaner := &Cleaner{
-		ec2conn: ec2mock,
-		config: Config{
-			Identifier:   "packer-example",
-			KeepReleases: 2,
-		},
-		now: time.Now().UTC(),
-	}
+		cleaner := &Cleaner{
+			ec2conn: ec2mock,
+			config:  cfg,
+			now:     time.Now().UTC(),
+		}
 
-	images, err := cleaner.RetrieveCandidateImages()
-	if err != nil {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-	if len(images) != 1 {
-		t.Fatalf("Unexpected image count: %d", len(images))
-	}
-	if *images[0].ImageId != "ami-12345c" {
-		t.Fatalf("Unexpected image: %s", *images[0].ImageId)
+		images, err := cleaner.RetrieveCandidateImages()
+		if err != nil {
+			t.Fatalf("Unexpected error occurred: %s", err)
+		}
+		if len(images) != 1 {
+			t.Fatalf("Unexpected image count: %d", len(images))
+		}
+		if *images[0].ImageId != "ami-12345c" {
+			t.Fatalf("Unexpected image: %s", *images[0].ImageId)
+		}
 	}
 }
 
 func TestCleaner_RetrieveCandidateImages_KeepDays(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ec2mock := NewMockEC2API(ctrl)
-
-	ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
-		Filters: []*ec2.Filter{
+	var (
+		cfgs = []Config{
 			{
-				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
-				Values: []*string{
-					aws.String("packer-example"),
+				KeepDays: 10,
+				Tags: map[string]string{
+					"Amazon_AMI_Management_Identifier": "packer-example",
 				},
 			},
-		},
-	}).Return(&ec2.DescribeImagesOutput{
-		Images: []*ec2.Image{{
-			ImageId:      aws.String("ami-12345a"),
-			CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
-		}, {
-			ImageId:      aws.String("ami-12345b"),
-			CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
-		}, {
-			ImageId:      aws.String("ami-12345c"),
-			CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
-			BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
-				Ebs: &ec2.EbsBlockDevice{
-					SnapshotId: aws.String("snap-12345a"),
+			{
+				KeepDays:   10,
+				Identifier: "packer-example",
+			},
+		}
+	)
+	for _, cfg := range cfgs {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		ec2mock := NewMockEC2API(ctrl)
+
+		ec2mock.EXPECT().DescribeImages(&ec2.DescribeImagesInput{
+			Filters: []*ec2.Filter{
+				{
+					Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
+					Values: []*string{
+						aws.String("packer-example"),
+					},
 				},
+			},
+		}).Return(&ec2.DescribeImagesOutput{
+			Images: []*ec2.Image{{
+				ImageId:      aws.String("ami-12345a"),
+				CreationDate: aws.String("2016-08-01T15:04:05.000Z"),
 			}, {
-				Ebs: &ec2.EbsBlockDevice{
-					SnapshotId: aws.String("snap-12345b"),
-				},
+				ImageId:      aws.String("ami-12345b"),
+				CreationDate: aws.String("2016-08-04T15:04:05.000Z"),
+			}, {
+				ImageId:      aws.String("ami-12345c"),
+				CreationDate: aws.String("2016-07-29T15:04:05.000Z"),
+				BlockDeviceMappings: []*ec2.BlockDeviceMapping{{
+					Ebs: &ec2.EbsBlockDevice{
+						SnapshotId: aws.String("snap-12345a"),
+					},
+				}, {
+					Ebs: &ec2.EbsBlockDevice{
+						SnapshotId: aws.String("snap-12345b"),
+					},
+				}},
 			}},
-		}},
-	}, nil)
+		}, nil)
 
-	cleaner := &Cleaner{
-		ec2conn: ec2mock,
-		config: Config{
-			Identifier: "packer-example",
-			KeepDays:   10,
-		},
-		now: time.Date(2016, time.August, 11, 11, 0, 0, 0, time.UTC),
-	}
+		cleaner := &Cleaner{
+			ec2conn: ec2mock,
+			config:  cfg,
+			now:     time.Date(2016, time.August, 11, 11, 0, 0, 0, time.UTC),
+		}
 
-	images, err := cleaner.RetrieveCandidateImages()
-	if err != nil {
-		t.Fatalf("Unexpected error occurred: %s", err)
-	}
-	if len(images) != 1 {
-		t.Fatalf("Unexpected image count: %d", len(images))
-	}
-	if *images[0].ImageId != "ami-12345c" {
-		t.Fatalf("Unexpected image: %s", *images[0].ImageId)
+		images, err := cleaner.RetrieveCandidateImages()
+		if err != nil {
+			t.Fatalf("Unexpected error occurred: %s", err)
+		}
+		if len(images) != 1 {
+			t.Fatalf("Unexpected image count: %d", len(images))
+		}
+		if *images[0].ImageId != "ami-12345c" {
+			t.Fatalf("Unexpected image: %s", *images[0].ImageId)
+		}
 	}
 }
 

@@ -72,15 +72,9 @@ func NewCleaner(sess *session.Session, config Config) (*Cleaner, error) {
 // Please be aware that these are candidates. Not all images are deleted due to output to the Packer UI.
 func (c *Cleaner) RetrieveCandidateImages() ([]*ec2.Image, error) {
 	log.Println("Describing images")
+	filters := c.genTagsFilter()
 	output, err := c.ec2conn.DescribeImages(&ec2.DescribeImagesInput{
-		Filters: []*ec2.Filter{
-			{
-				Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
-				Values: []*string{
-					aws.String(c.config.Identifier),
-				},
-			},
-		},
+		Filters: filters,
 	})
 	if err != nil {
 		return nil, err
@@ -236,4 +230,28 @@ func (c *Cleaner) setLaunchTemplateUsed() error {
 		}
 	}
 	return nil
+}
+
+func (c *Cleaner) genTagsFilter() []*ec2.Filter {
+	var (
+		filters []*ec2.Filter
+	)
+	if c.config.Identifier != "" {
+		filters = append(filters, &ec2.Filter{
+			Name: aws.String("tag:Amazon_AMI_Management_Identifier"),
+			Values: []*string{
+				aws.String(c.config.Identifier),
+			},
+		})
+	} else {
+		for k, v := range c.config.Tags {
+			filters = append(filters, &ec2.Filter{
+				Name: aws.String(fmt.Sprintf("tag:%s", k)),
+				Values: []*string{
+					aws.String(v),
+				},
+			})
+		}
+	}
+	return filters
 }

@@ -69,6 +69,7 @@ type FlatConfig struct {
 	KeepDays             *int                  `mapstructure:"keep_days" cty:"keep_days" hcl:"keep_days"`
 	Regions              []string              `mapstructure:"regions" cty:"regions" hcl:"regions"`
 	DryRun               *bool                 `mapstructure:"dry_run" cty:"dry_run" hcl:"dry_run"`
+	Tags                 map[string]string     `mapstructure:"tags" cty:"tags" hcl:"tags"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -105,6 +106,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"keep_days":                  &hcldec.AttrSpec{Name: "keep_days", Type: cty.Number, Required: false},
 		"regions":                    &hcldec.AttrSpec{Name: "regions", Type: cty.List(cty.String), Required: false},
 		"dry_run":                    &hcldec.AttrSpec{Name: "dry_run", Type: cty.Bool, Required: false},
+		"tags":                       &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},
 	}
 	return s
 }
