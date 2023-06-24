@@ -1,3 +1,19 @@
+## v1.4.0 (2023-06-25)
+
+### Enhancements
+
+- [#378](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/378): feat: search by tags provided in free style
+
+### Chores
+
+- [#363](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/363): Bump github.com/hashicorp/go-getter/v2 from 2.1.0 to 2.2.0
+- [#372](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/372): Bump github.com/hashicorp/packer-plugin-sdk from 0.3.2 to 0.4.0
+- [#374](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/374): Bump actions/setup-go from 3 to 4
+- [#379](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/379): Bump github.com/hashicorp/hcl/v2 from 2.13.0 to 2.17.0
+- [#380](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/380): Bump github.com/zclconf/go-cty from 1.13.0 to 1.13.2
+- [#381](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/381): Bump github.com/aws/aws-sdk-go from 1.44.173 to 1.44.289
+- [#382](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/382): Go 1.20
+
 ## v1.3.1 (2023-01-05)
 
 - [#353](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/353): Fix release workflow
