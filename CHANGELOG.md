@@ -1,3 +1,7 @@
+## v1.4.1 (2023-06-26)
+
+- [#384](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/384): Pin go-cty version to v1.10.0
+
 ## v1.4.0 (2023-06-25)
 
 ### Enhancements
