@@ -3,7 +3,7 @@ module github.com/wata727/packer-plugin-amazon-ami-management
 go 1.22
 
 require (
-	github.com/aws/aws-sdk-go v1.44.289
+	github.com/aws/aws-sdk-go v1.53.14
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/aws-sdk-go-base v1.1.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
