@@ -1,3 +1,24 @@
+## v1.5.0 (2024-06-03)
+
+### Enhancements
+
+- [#409](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/409): deps: Go 1.22 and SDK 0.5.3
+
+### BugFixes
+
+- [#415](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/415): Remove VersionPrerelease
+  - This fix is ​​required for installation with Packer v1.11
+
+### Chores
+
+- [#403](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/403): Bump actions/checkout from 3 to 4
+- [#405](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/405): Bump goreleaser/goreleaser-action from 4 to 5
+- [#410](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/410): Bump github.com/hashicorp/hcl/v2 from 2.19.1 to 2.20.1
+- [#411](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/411): Bump github.com/aws/aws-sdk-go from 1.44.289 to 1.53.14
+- [#412](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/412): Bump golang.org/x/net from 0.17.0 to 0.23.0
+- [#413](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/413): Bump github.com/go-jose/go-jose/v3 from 3.0.0 to 3.0.3
+- [#414](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/414): Bump actions/setup-go from 4 to 5
+
 ## v1.4.1 (2023-06-26)
 
 - [#384](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/384): Pin go-cty version to v1.10.0
