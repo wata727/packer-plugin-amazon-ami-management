@@ -22,7 +22,7 @@ jobs:
       id: plugin_describe
       run: echo "api_version=$(go run . describe | jq -r '.api_version')" >> $GITHUB_OUTPUT
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v4
+      uses: goreleaser/goreleaser-action@v5
       with:
         version: latest
         args: release --rm-dist
