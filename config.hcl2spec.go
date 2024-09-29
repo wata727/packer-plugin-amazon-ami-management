@@ -67,6 +67,7 @@ type FlatConfig struct {
 	Identifier           *string               `mapstructure:"identifier" cty:"identifier" hcl:"identifier"`
 	KeepReleases         *int                  `mapstructure:"keep_releases" cty:"keep_releases" hcl:"keep_releases"`
 	KeepDays             *int                  `mapstructure:"keep_days" cty:"keep_days" hcl:"keep_days"`
+	ResolveAliases       *bool                 `mapstructure:"resolve_aliases" cty:"resolve_aliases" hcl:"resolve_aliases"`
 	Regions              []string              `mapstructure:"regions" cty:"regions" hcl:"regions"`
 	DryRun               *bool                 `mapstructure:"dry_run" cty:"dry_run" hcl:"dry_run"`
 	Tags                 map[string]string     `mapstructure:"tags" cty:"tags" hcl:"tags"`
@@ -104,6 +105,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"identifier":                 &hcldec.AttrSpec{Name: "identifier", Type: cty.String, Required: false},
 		"keep_releases":              &hcldec.AttrSpec{Name: "keep_releases", Type: cty.Number, Required: false},
 		"keep_days":                  &hcldec.AttrSpec{Name: "keep_days", Type: cty.Number, Required: false},
+		"resolve_aliases":            &hcldec.AttrSpec{Name: "resolve_aliases", Type: cty.Bool, Required: false},
 		"regions":                    &hcldec.AttrSpec{Name: "regions", Type: cty.List(cty.String), Required: false},
 		"dry_run":                    &hcldec.AttrSpec{Name: "dry_run", Type: cty.Bool, Required: false},
 		"tags":                       &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -31,6 +33,7 @@ type Cleaner struct {
 	config          Config
 	now             time.Time
 	used            map[string]*Used
+	resolvedAliases map[string]string
 }
 
 // Used is metadata about the details of the image being used
@@ -47,6 +50,7 @@ func NewCleaner(sess *session.Session, config Config) (*Cleaner, error) {
 		config:          config,
 		now:             time.Now().UTC(),
 		used:            map[string]*Used{},
+		resolvedAliases: map[string]string{},
 	}
 
 	err := cleaner.setInstanceUsed()
@@ -223,13 +227,68 @@ func (c *Cleaner) setLaunchTemplateUsed() error {
 				continue
 			}
 
-			c.used[*ltv.LaunchTemplateData.ImageId] = &Used{
+			imageId := *ltv.LaunchTemplateData.ImageId
+
+			if c.config.ResolveAliases {
+				resolvedImageId, err := c.resolveImageAlias(imageId, lt.LaunchTemplateId, ltv.VersionNumber)
+
+				if err != nil {
+					return err
+				}
+
+				imageId = resolvedImageId
+			}
+
+			c.used[imageId] = &Used{
 				ID:   fmt.Sprintf("%s (%d)", *ltv.LaunchTemplateName, *ltv.VersionNumber),
 				Type: "launch template",
 			}
 		}
 	}
 	return nil
+}
+
+// If the passed imageAlias is an alias, It will return the resolved imageId.
+// Otherwise, it will return the original imageId.
+// See https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html to understand this use case.
+func (c *Cleaner) resolveImageAlias(imageAlias string, launchTemplateId *string, launchTemplateVersion *int64) (string, error) {
+	// If we need to resolve aliases. We need to perform an additional DescribeLaunchTemplateVersions
+	// for each version we want to resolve. Because when calling the DescribeLaunchTemplateVersions operation: Resource aliasing (resolveAlias)
+	// is only supported when doing single version describe
+	imageIdIsAliased := strings.HasPrefix(imageAlias, "resolve:ssm:")
+	resolvedImageId, isAliasResolved := c.resolvedAliases[imageAlias]
+	imageId := imageAlias
+
+	if imageIdIsAliased && isAliasResolved {
+		// If already resolved, Just use the resolved value.
+		imageId = resolvedImageId
+	} else if imageIdIsAliased && !isAliasResolved {
+		// If have not been already resolved, resolve the alias.
+		aliasedVersions, err := c.ec2conn.DescribeLaunchTemplateVersions(&ec2.DescribeLaunchTemplateVersionsInput{
+			LaunchTemplateId: launchTemplateId,
+			Versions: []*string{
+				aws.String(strconv.FormatInt(*launchTemplateVersion, 10)),
+			},
+			ResolveAlias: aws.Bool(true),
+		})
+
+		if err != nil {
+			return "", err
+		}
+
+		if len(aliasedVersions.LaunchTemplateVersions) == 0 {
+			return imageAlias, nil
+		}
+
+		// Save the resolved value.
+		ltv := aliasedVersions.LaunchTemplateVersions[0]
+		imageId = *ltv.LaunchTemplateData.ImageId
+
+		// We track if a given alias was already resolved to avoid unnecesary additional DescribeLaunchTemplateVersions requests.
+		c.resolvedAliases[imageAlias] = imageId
+	}
+
+	return imageId, nil
 }
 
 func (c *Cleaner) genTagsFilter() []*ec2.Filter {

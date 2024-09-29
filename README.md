@@ -96,6 +96,41 @@ build {
 }
 ```
 
+### An example with defined option `resolve_aliases`
+
+When using AWS Systems Manager parameters instead of AMI IDs in launch templates (See the [AWS documentation](https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html)), it is essential to set the `resolve_aliases` option to `true`. This allows the post-processor to resolve the SSM Parameter and retrieve the actual AMI ID associated with it.
+
+If `resolve_aliases` is not set to `true`, the post-processor will not detect the actual AMI ID usage, leading to potential deletion of the AMI and its related snapshot, even if they are still in use by the launch template.
+
+```hcl
+source "amazon-ebs" "example" {
+  region        = "us-east-1"
+  source_ami    = "ami-6869aa05"
+  instance_type = "t2.micro"
+  ssh_username  = "ec2-user"
+  ssh_pty       = true
+  ami_name      = "packer-example ${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  tags = {
+    Amazon_AMI_Management_Identifier = "packer-example"
+  }
+}
+
+build {
+  sources = ["source.amazon-ebs.example"]
+
+  provisioner "shell" {
+    inline = ["echo 'running...'"]
+  }
+
+  post-processor "amazon-ami-management" {
+    regions         = ["us-east-1"]
+    identifier      = "packer-example"
+    keep_releases   = 3
+    resolve_aliases = true
+  }
+}
+```
+
 ### Configuration
 
 Type: `amazon-ami-management`
@@ -110,6 +145,7 @@ Required:
 
 Optional:
 
+- `resolve_aliases` (boolean) - If `true`, the post-processor resolves the AWS Systems Manager parameter when the launch template uses it to specify the AMI ID. See [AWS documentation](https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html). **Important**: If you set this to `true`, you must add `ssm:GetParameters` permission to the IAM Role.
 - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
 The following attibutes are also available. These are optional and used in the same way as AWS Builder:
@@ -174,6 +210,50 @@ The post-processor requires additional permissions to work. Below is the differe
   }]
 }
 ```
+
+Add this additional IAM Policy to the IAM Role if you set `resolve_aliases` to `true`
+
+```json
+{
+    "Statement": [
+        {
+            "Action": [
+                "ssm:GetParameters"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+```
+
+As a best practice you can restrict the permission to only a specific subgroup of parameters.
+
+```json
+{
+    "Statement": [
+        {
+            "Action": [
+                "ssm:GetParameters"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:ssm:${region}:${accountId}:parameter/company-amis/*"
+        }
+    ],
+    "Version": "2012-10-17"
+}
+```
+
+NOTE: Replace `${region}` and `${accountId}` with the correct values.
+
+In the previous example. We give access to all parameters whose name begin with `/company-amis/`. For example if you had the following parameters:
+
+* /company-amis/wordpress/windows
+* /company-amis/wordpress/linux
+* /cool-service/db-password
+
+This permission would give access to `/company-amis/wordpress/windows` and `/company-amis/jomla/linux` parameters. But not to `/cool-service/db-password` parameter.
 
 ## Developing Plugin
 
