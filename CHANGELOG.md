@@ -1,3 +1,10 @@
+## v1.6.0 (2024-09-29)
+
+### Enhancements
+
+- [#431](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/431): Add new `resolve_aliases` option.
+  - If `true`, the post-processor resolves the AWS Systems Manager parameter when the launch template uses it to specify the AMI ID. See [AWS documentation](https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html).
+
 ## v1.5.0 (2024-06-03)
 
 ### Enhancements
