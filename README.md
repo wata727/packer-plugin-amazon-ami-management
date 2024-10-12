@@ -169,7 +169,7 @@ The post-processor requires additional permissions to work. Below is the differe
         "ec2:RegisterImage",
         "ec2:RunInstances",
         "ec2:StopInstances",
-        "ec2:TerminateInstances"
+        "ec2:TerminateInstances",
 +       "ssm:GetParameters" // If "resolve_aliases" is enabled
       ],
       "Resource" : "*"
