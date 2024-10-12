@@ -179,24 +179,6 @@ func TestConfigCases(t *testing.T) {
 					"resolve_aliases": false,
 				},
 			},
-			{
-				Name: "Configure valid config with ResolveAliases set to true",
-				Config: map[string]interface{}{
-					"regions":         defaultRegions,
-					"tags":            defaultTags,
-					"keep_days":       10,
-					"resolve_aliases": true,
-				},
-			},
-			{
-				Name: "Configure valid config with ResolveAliases set to false",
-				Config: map[string]interface{}{
-					"regions":         defaultRegions,
-					"tags":            defaultTags,
-					"keep_days":       10,
-					"resolve_aliases": false,
-				},
-			},
 		}
 	)
 
