@@ -1,6 +1,6 @@
 module github.com/wata727/packer-plugin-amazon-ami-management
 
-go 1.22
+go 1.23
 
 require (
 	github.com/aws/aws-sdk-go v1.53.14
