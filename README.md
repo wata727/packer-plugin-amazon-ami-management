@@ -8,7 +8,9 @@ Packer post-processor plugin for Amazon AMI management
 
 ## Description
 
-This post-processor cleanups old AMIs and EBS snapshots after baking a new AMI.
+This post-processor cleanups outdated AMIs and EBS snapshots after baking a new AMI.
+
+You can configure the quantity or number of days you want to keep them, and the post-processor will delete all unused AMIs (not used in an instance, launch template, or launch configuration) according to your configuration.
 
 ## Installation
 
@@ -102,11 +104,11 @@ Type: `amazon-ami-management`
 
 Required:
 
-- `identifier` (string) - An identifier of AMIs. This plugin looks `Amazon_AMI_Management_Identifier` tag. If `identifier` matches tag value, these AMI becomes to management target.
-- `tags` (map of strings) - The tags to indetify AMI. This plugin uses search by `tags`. If `tags` matches `AMI` tags, these AMI becomes to management target. If `identifier` is set, this parameter is ignored.
+- `identifier` (string) - An identifier of AMIs. This plugin identifies AMIs as managed if the value matches the `Amazon_AMI_Management_Identifier` tag.
+- `tags` (map of strings) - The tags to indetify AMI. It can be used when a single `identifier` tag is not sufficient. If `identifier` is set, this parameter is ignored.
 - `keep_releases` (integer) - The number of AMIs. This value is invalid when `keep_days` is set.
 - `keep_days` (integer) - The number of days to keep AMIs. For example, if you specify `10`, AMIs created before 10 days will be deleted. This value is invalid when `keep_releases` is set.
-- `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs. **NOTE:** Before v0.3.0, this parameter was `region`. Since 0.4.0, `region` is not used.
+- `regions` (array of strings) - A list of regions, such as `us-east-1` in which to manage AMIs.
 
 Optional:
 
@@ -179,8 +181,8 @@ The post-processor requires additional permissions to work. Below is the differe
 
 ## Developing Plugin
 
-If you wish to build this plugin on your environment, you can use GNU Make build system.
-But this Makefile depends on [Go](https://golang.org/) 1.23 or more. At First, you should install Go.
+If you want to build this plugin on your environment, you can use GNU Make build system.
+This Makefile depends on [Go](https://golang.org/) 1.23 or more. At First, you should install Go.
 
 ```
 $ make build
