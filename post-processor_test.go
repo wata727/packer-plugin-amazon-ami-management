@@ -161,6 +161,24 @@ func TestConfigCases(t *testing.T) {
 					"keep_releases": 3,
 				},
 			},
+			{
+				Name: "Configure valid config with ResolveAliases set to true",
+				Config: map[string]interface{}{
+					"regions":         defaultRegions,
+					"tags":            defaultTags,
+					"keep_releases":   3,
+					"resolve_aliases": true,
+				},
+			},
+			{
+				Name: "Configure valid config with ResolveAliases set to false",
+				Config: map[string]interface{}{
+					"regions":         defaultRegions,
+					"tags":            defaultTags,
+					"keep_releases":   3,
+					"resolve_aliases": false,
+				},
+			},
 		}
 	)
 

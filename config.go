@@ -13,12 +13,13 @@ type Config struct {
 	common.PackerConfig `mapstructure:",squash"`
 	AccessConfig        `mapstructure:",squash"`
 
-	Identifier   string            `mapstructure:"identifier"`
-	KeepReleases int               `mapstructure:"keep_releases"`
-	KeepDays     int               `mapstructure:"keep_days"`
-	Regions      []string          `mapstructure:"regions"`
-	DryRun       bool              `mapstructure:"dry_run"`
-	Tags         map[string]string `mapstructure:"tags"`
+	Identifier     string            `mapstructure:"identifier"`
+	KeepReleases   int               `mapstructure:"keep_releases"`
+	KeepDays       int               `mapstructure:"keep_days"`
+	ResolveAliases bool              `mapstructure:"resolve_aliases"`
+	Regions        []string          `mapstructure:"regions"`
+	DryRun         bool              `mapstructure:"dry_run"`
+	Tags           map[string]string `mapstructure:"tags"`
 
 	ctx interpolate.Context
 }

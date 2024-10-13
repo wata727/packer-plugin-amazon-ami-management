@@ -269,3 +269,85 @@ func TestCleaner_DeleteImage_DryRun(t *testing.T) {
 		t.Fatalf("Unexpected error occurred: %s", err)
 	}
 }
+
+func TestCleaner_setLaunchTemplateUsed_ResolveAliases(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ec2mock := NewMockEC2API(ctrl)
+
+	ec2mock.EXPECT().DescribeLaunchTemplates(&ec2.DescribeLaunchTemplatesInput{}).Return(&ec2.DescribeLaunchTemplatesOutput{
+		LaunchTemplates: []*ec2.LaunchTemplate{
+			{
+				LaunchTemplateId: aws.String("lt-12345a"),
+			},
+		},
+	}, nil)
+	ec2mock.EXPECT().DescribeLaunchTemplateVersions(&ec2.DescribeLaunchTemplateVersionsInput{
+		LaunchTemplateId: aws.String("lt-12345a"),
+	}).Return(&ec2.DescribeLaunchTemplateVersionsOutput{
+		LaunchTemplateVersions: []*ec2.LaunchTemplateVersion{
+			{
+				LaunchTemplateName: aws.String("cool-service-launch-template"),
+				VersionNumber:      aws.Int64(3),
+				LaunchTemplateData: &ec2.ResponseLaunchTemplateData{
+					ImageId: aws.String("resolve:ssm:/acme/cool-service/latest-ami"),
+				},
+			},
+			{
+				// This version should not generate an extra request.
+				LaunchTemplateName: aws.String("cool-service-launch-template"),
+				VersionNumber:      aws.Int64(2),
+				LaunchTemplateData: &ec2.ResponseLaunchTemplateData{
+					ImageId: aws.String("resolve:ssm:/acme/cool-service/latest-ami"),
+				},
+			},
+			{
+				LaunchTemplateName: aws.String("cool-service-launch-template"),
+				VersionNumber:      aws.Int64(1),
+				LaunchTemplateData: &ec2.ResponseLaunchTemplateData{
+					ImageId: aws.String("ami-12345a"),
+				},
+			},
+		},
+	}, nil)
+
+	// We only expect an additional call to DescribeLaunchTemplateVersions since version 2 and 3
+	// have the same value in SSM Parameter "/acme/cool-service/latest-ami".
+	ec2mock.EXPECT().DescribeLaunchTemplateVersions(&ec2.DescribeLaunchTemplateVersionsInput{
+		LaunchTemplateId: aws.String("lt-12345a"),
+		Versions:         []*string{aws.String("3")},
+		ResolveAlias:     aws.Bool(true),
+	}).Return(&ec2.DescribeLaunchTemplateVersionsOutput{
+		LaunchTemplateVersions: []*ec2.LaunchTemplateVersion{
+			{
+				VersionNumber: aws.Int64(3),
+				LaunchTemplateData: &ec2.ResponseLaunchTemplateData{
+					ImageId: aws.String("ami-12345b"), // This is the value in SSM Paramter "/acme/cool-service/latest-ami"
+				},
+			},
+		},
+	}, nil)
+
+	cleaner := &Cleaner{
+		ec2conn: ec2mock,
+		config: Config{
+			ResolveAliases: true,
+		},
+		used:            map[string]*Used{},
+		resolvedAliases: map[string]string{},
+	}
+
+	err := cleaner.setLaunchTemplateUsed()
+
+	if err != nil {
+		t.Fatalf("Unexpected error occurred: %s", err)
+	}
+
+	if len(cleaner.used) != 2 {
+		t.Fatalf("Unexpected used count: %d", len(cleaner.used))
+	}
+
+	if len(cleaner.resolvedAliases) != 1 {
+		t.Fatalf("Unexpected resolvedAliases count: %d", len(cleaner.resolvedAliases))
+	}
+}

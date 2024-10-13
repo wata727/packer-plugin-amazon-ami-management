@@ -110,6 +110,7 @@ Required:
 
 Optional:
 
+- `resolve_aliases` (boolean) - If `true`, the post-processor resolves the AWS Systems Manager parameter when the launch template uses it to specify the AMI ID. See [AWS documentation](https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html). **Important**: If you set this to `true`, you must add `ssm:GetParameters` permission to the IAM Role.
 - `dry_run` (boolean) - If `true`, the post-processor doesn't actually delete AMIs.
 
 The following attibutes are also available. These are optional and used in the same way as AWS Builder:
@@ -168,7 +169,8 @@ The post-processor requires additional permissions to work. Below is the differe
         "ec2:RegisterImage",
         "ec2:RunInstances",
         "ec2:StopInstances",
-        "ec2:TerminateInstances"
+        "ec2:TerminateInstances",
++       "ssm:GetParameters" // If "resolve_aliases" is enabled
       ],
       "Resource" : "*"
   }]
