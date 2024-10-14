@@ -1,3 +1,7 @@
+## v1.6.1 (2024-10-14)
+
+- [#435](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/435): Fix GoReleaser build
+
 ## v1.6.0 (2024-10-14)
 
 ### Enhancements
