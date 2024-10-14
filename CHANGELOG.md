@@ -1,9 +1,19 @@
-## v1.6.0 (2024-09-29)
+## v1.6.0 (2024-10-14)
 
 ### Enhancements
 
 - [#431](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/431): Add new `resolve_aliases` option.
   - If `true`, the post-processor resolves the AWS Systems Manager parameter when the launch template uses it to specify the AMI ID. See [AWS documentation](https://docs.aws.amazon.com/autoscaling/ec2/userguide/using-systems-manager-parameters.html).
+
+### Chores
+
+- [#417](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/417): Bump goreleaser/goreleaser-action from 5 to 6
+- [#419](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/419): Bump github.com/hashicorp/packer-plugin-sdk from 0.5.3 to 0.5.4
+- [#422](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/422): Bump github.com/hashicorp/go-retryablehttp from 0.7.0 to 0.7.7
+- [#428](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/428): Bump github.com/aws/aws-sdk-go from 1.53.14 to 1.55.5
+- [#429](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/429): Bump github.com/hashicorp/hcl/v2 from 2.20.1 to 2.22.0
+- [#432](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/432): deps: Go 1.23
+- [#433](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/433): Tweak README
 
 ## v1.5.0 (2024-06-03)
 
