@@ -4,6 +4,7 @@ NAME=amazon-ami-management
 BINARY=packer-plugin-${NAME}
 MOCK_VERSION?=$(shell go list -m github.com/golang/mock | cut -d " " -f2)
 SDK_VERSION?=$(shell go list -m github.com/hashicorp/packer-plugin-sdk | cut -d " " -f2)
+PLUGIN_FQN=$(shell grep -E '^module' <go.mod | sed -E 's/module \s*//')
 
 deps:
 	go install github.com/golang/mock/mockgen@${MOCK_VERSION}
@@ -19,8 +20,7 @@ build: test
 	go build -v
 
 install: build
-	mkdir -p ~/.packer.d/plugins
-	mv ./packer-plugin-amazon-ami-management ~/.packer.d/plugins/
+	packer plugins install --path ${BINARY} "$(shell echo "${PLUGIN_FQN}" | sed 's/packer-plugin-//')"
 
 plugin-check: deps build
 	packer-sdc plugin-check ${BINARY}

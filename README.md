@@ -181,9 +181,10 @@ The post-processor requires additional permissions to work. Below is the differe
 
 ## Developing Plugin
 
-If you want to build this plugin on your environment, you can use GNU Make build system.
-This Makefile depends on [Go](https://golang.org/) 1.23 or more. At First, you should install Go.
+To use the plugin built locally with Packer, you can use `make install`.
 
 ```
-$ make build
+$ make install
 ```
+
+This command runs `go build` to generate the plugin binary and then installs the plugin with `packer plugins install`. This requires that you have Go v1.23+ and Packer v1.7+ installed.
