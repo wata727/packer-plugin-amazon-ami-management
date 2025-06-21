@@ -1,3 +1,17 @@
+## v1.7.0 (2025-06-21)
+
+- [#436](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/436): Improve developing plugin documentation
+- [#438](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/438): Bump github.com/hashicorp/hcl/v2 from 2.22.0 to 2.23.0
+- [#439](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/439): Bump golang.org/x/crypto from 0.23.0 to 0.31.0
+- [#440](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/440): Bump github.com/aws/aws-sdk-go from 1.55.5 to 1.55.6
+- [#441](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/441): Bump github.com/hashicorp/packer-plugin-sdk from 0.5.4 to 0.6.0
+- [#444](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/444): Bump golang.org/x/net from 0.25.0 to 0.38.0
+- [#445](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/445): Bump github.com/go-jose/go-jose/v4 from 4.0.1 to 4.0.5
+- [#447](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/447): Fix GoReleaser archives.format config
+- [#448](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/448): deps: Go 1.24
+- [#449](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/449): Bump github.com/aws/aws-sdk-go from 1.55.6 to 1.55.7
+- [#450](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/450): Fix broken GitHub Actions badge
+
 ## v1.6.1 (2024-10-14)
 
 - [#435](https://github.com/wata727/packer-plugin-amazon-ami-management/pull/435): Fix GoReleaser build
