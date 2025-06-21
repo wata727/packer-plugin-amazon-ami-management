@@ -1,6 +1,6 @@
 # packer-plugin-amazon-ami-management
 
-[![Build Status](https://github.com/wata727/packer-plugin-amazon-ami-management/workflows/build/badge.svg?branch=master)](https://github.com/wata727/packer-plugin-amazon-ami-management/actions)
+[![Build Status](https://github.com/wata727/packer-plugin-amazon-ami-management/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/wata727/packer-plugin-amazon-ami-management/actions)
 [![GitHub release](https://img.shields.io/github/release/wata727/packer-plugin-amazon-ami-management.svg)](https://github.com/wata727/packer-plugin-amazon-ami-management/releases/latest)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-blue.svg)](LICENSE)
 
