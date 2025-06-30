@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/aws-sdk-go-base v1.1.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/hcl/v2 v2.23.0
-	github.com/hashicorp/packer-plugin-sdk v0.6.1
+	github.com/hashicorp/packer-plugin-sdk v0.6.2
 	github.com/zclconf/go-cty v1.13.3
 )
 
