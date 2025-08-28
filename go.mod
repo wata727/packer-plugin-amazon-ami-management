@@ -53,7 +53,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	github.com/ulikunitz/xz v0.5.10 // indirect
+	github.com/ulikunitz/xz v0.5.14 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
